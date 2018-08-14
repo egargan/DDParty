@@ -5,13 +5,20 @@ var express = require('express');
 // request routing
 var router = express.Router();
 
+// home page ( index for games and new player )
 router.get(['/','/home','main'],(req, res, next) => {
   res.render('home',{title:'Home'})
 });
 
-router.get(['/play'],(req, res, next) => {
-  res.render('play',{title:'title'})
-});
+// player output
+router.get('/player',(req, res, next)=>{
+  res.render('home',{title:'Home'})
+})
+
+// render output
+router.get('/screen',(req, res, next)=>{
+  res.render('home',{title:'Home'})
+})
 
 // exporting module
 module.exports = router;
