@@ -23,6 +23,33 @@ body {
 
 }
 
-h1{
-  color:$col_grass;
+h1 {
+  color: $col_light;
+  text-align: center;
+  font-size: 5em;
+}
+
+.button {
+    background-color: $col_grass;
+    border: none;
+    color: $col_light;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 3em;
+
+    width: 100%;
+    margin: 10px;
+
+    &:hover {
+        background-color: $col_teal;
+    }
+}
+
+.center {
+    display: block;
+    margin: auto;
+    // width: 0%;
+    width: 60%;
 }
