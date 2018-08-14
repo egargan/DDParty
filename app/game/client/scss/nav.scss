@@ -1,0 +1,46 @@
+
+@import 'colours';
+
+$nav_height:50px;
+
+.nav-container {
+
+  width: 100%;
+  height: $nav_height;
+
+  display: flex;
+
+  flex-direction: row;
+
+  justify-content: center;
+
+  align-items: center;
+
+}
+
+.nav-item {
+
+  display: block;
+
+  width: 40px;
+  height: 40px;
+
+  flex-grow: 1;
+
+  text-align: center;
+
+  font-size: 1.5em;
+
+  line-height: 1.5em;
+
+  color:black;
+
+  text-decoration: none;
+
+}
+
+.nav-item:hover {
+  color:$col_dark;
+  font-weight: bold;
+  cursor: pointer;
+}
