@@ -15,7 +15,7 @@ var path = require('path');
 module.exports = {
 	mode: 'development',
 	entry: {
-		home: './app/game/client/home.js',
+		home: './src/home.js',
 	},
   output: {
     path: path.join(__dirname, '/public/js/'),

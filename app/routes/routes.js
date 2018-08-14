@@ -12,12 +12,12 @@ router.get(['/','/home','main'],(req, res, next) => {
 
 // player output
 router.get('/player',(req, res, next)=>{
-  res.render('home',{title:'Home'})
+  res.render('player',{title:'Player'})
 })
 
 // render output
 router.get('/screen',(req, res, next)=>{
-  res.render('home',{title:'Home'})
+  res.render('screen',{title:'Screen'})
 })
 
 // exporting module
