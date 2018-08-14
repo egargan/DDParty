@@ -6,6 +6,7 @@ const path = require('path');
 
 function init(app){
 
+  // directory string pointing to the view folder ( folder with templates and partials in it )
   var viewDir = path.join(__dirname, '/../views')
 
   // registering all the top level partials
