@@ -1,6 +1,6 @@
 
 // tictactoe server class
-const TicTacToe = require('./TicTacToe')
+// const TicTacToe = require('./TicTacToe')
 
 // importing module enum for message types
 const MessageType = require('../shared/message');
