@@ -13,12 +13,10 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 var path = require('path');
 
 module.exports = {
-	mode: 'development',
+	mode: 'production',
 	entry: {
-		home: [
-			'./src/bundle.js',
-			'./app/game/bundle.js'
-		],
+		home: './src/bundle.js',
+		screen:'./app/game/bundle.js',
 	},
   output: {
     path: path.join(__dirname, '/public/js/'),
@@ -78,6 +76,7 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         use: {
 	        loader: 'babel-loader',
+					// exclude: /node_modules/,
 	        options: {
 		        presets: ['env']
 					}

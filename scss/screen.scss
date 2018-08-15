@@ -1,0 +1,28 @@
+
+@import url('https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500');
+
+@import "am_colours";
+
+@font-face {
+  font-family: 'glyphicons';
+  src: url('/font/glyphicons.woff2') format('woff2');
+}
+
+* {
+
+	font-family: 'Raleway', sans-serif;
+	box-sizing: border-box;
+
+  margin: 0;
+  padding: 0;
+
+}
+
+
+.grageo-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor:none;
+  z-index: 10;
+}

@@ -1,6 +1,8 @@
 
 let path = require('path');
 
+require('../../scss/screen.scss')
+
 // main file for launching game code
 require('./client/app.js');
 
@@ -10,10 +12,10 @@ require('./shared/message.js')
 // grageo files
 
 // importing lib files
-require('./lib/grageo/canvaslayer.js');
-require('./lib/grageo/colour.js');
-require('./lib/grageo/entity.js');
-require('./lib/grageo/vector.js');
+require('./grageo/canvaslayer.js');
+require('./grageo/colour.js');
+require('./grageo/entity.js');
+require('./grageo/vector.js');
 
 // requiring main module
-require('./lib/grageo/grageo.js');
+require('./grageo/grageo.js');

@@ -10,11 +10,6 @@ router.get(['/','/home','/main'],(req, res, next) => {
   res.render('home',{title:'home'})
 });
 
-// home page ( index for games and new player )
-router.get(['/asdf'],(req, res, next) => {
-  res.render('home',{title:'asdf'})
-});
-
 // player output
 router.get('/player',(req, res, next)=>{
   res.render('player',{title:'Player'})

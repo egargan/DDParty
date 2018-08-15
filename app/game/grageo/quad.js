@@ -5,7 +5,6 @@ var Vector = require('./vector')
 
 var Util = require('./grageo').Util;
 
-
 class Quad extends Entity {
 
   constructor(x,y,w,h){
@@ -13,6 +12,9 @@ class Quad extends Entity {
 
     // rotational angle of quad
     this.direction = 0;
+
+    // rotational increment
+    this.offset = 0;
 
     //positions of polygon
     // 0 - top left
@@ -32,8 +34,16 @@ class Quad extends Entity {
     return this.direction;
   }
 
+  getOffset(){
+    return this.offset;
+  }
+
   setDirection(direction){
     this.direction = direction;
+  }
+
+  setOffset(offset){
+    this.offset = offset;
   }
 
 
@@ -85,7 +95,7 @@ class Quad extends Entity {
 
     this.updateRotation()
 
-    this.direction+=10;
+    this.direction+=this.offset;
 
   }
 

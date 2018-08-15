@@ -358,7 +358,13 @@ var grageo = (function(){
 
   // draw method hook in
   Draw.draw = () => {
-    Middle.text(100,'Ariel','center',new Vector(width/2,height/2),'No Draw Hook In');
+
+    grageo.Layers.Background.clear();
+    grageo.Layers.Middle.clear();
+    grageo.Layers.Foreground.clear();
+
+    grageo.Layers.Middle.text(100,'Ariel','center',new Vector(width/2,height/2),'No Draw Hook In');
+
   }
 
   // methods associated with performing utilites on shape objects

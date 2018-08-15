@@ -13,7 +13,9 @@ function init(app){
   // set up static folder directory
   app.use(express.static(path.join(__dirname, '/../../public')));
 
-  //
+  // grageo exposition
+  app.use(express.static(path.join(__dirname, '/../game/lib/grageo')));
+
   var routes = require('./routes');
 
   // referencing route index module
