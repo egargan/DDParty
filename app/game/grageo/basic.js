@@ -152,5 +152,12 @@ class Rectangle extends Entity {
 
 }
 
+// class  extends Entity {
+//   constructor() {
+//
+//   }
+// }
 
-module.exports = Entity;
+module.exports.Entity = Entity;
+module.exports.Circle = Circle;
+module.exports.Rectangle = Rectangle;

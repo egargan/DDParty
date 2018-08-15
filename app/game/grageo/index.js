@@ -1,7 +1,7 @@
-module.exports = {
+ module.exports = {
   grageo:require('./grageo'),
   colour:require('./colour'),
-  entity:require('./entity'),
+  basic :require('./basic'),
   quad  :require('./quad'),
   vector:require('./vector'),
 }

@@ -1,4 +1,7 @@
 
+// importing Util
+var Util = require('./grageo').Util;
+
 class Vector {
 
   constructor(x=0,y=0,z=0) {
@@ -46,6 +49,13 @@ class Vector {
   toString(x = true,y = true,z = false){
     return "[ " + (x?this.x+' ':'') + (y?this.y+' ':'') + (z?this.z+' ':'') + ']'
   }
+
+  // random(){
+  //   this.x = Util.random(-1,1);
+  //   this.y = Util.random(-1,1);
+  //   this.z = Util.random(-1,1);
+  //   return this;
+  // }
 
 }
 

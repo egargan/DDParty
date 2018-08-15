@@ -1,5 +1,5 @@
 
-var Entity = require('./entity.js')
+var Entity = require('./basic.js').Entity
 
 var Vector = require('./vector')
 

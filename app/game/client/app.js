@@ -7,15 +7,6 @@ const grageoLibrary = require('../grageo');
 // storing grageo main module
 const g = grageoLibrary.grageo;
 
-// storing colour module
-const Colour = grageoLibrary.colour
-
-// storing vector module
-const Vector = grageoLibrary.vector
-
-// storing quad module
-const Quad = grageoLibrary.quad
-
 // storing reference to canvas layers
 var B = g.Layers.Background;
 var M = g.Layers.Middle;
@@ -24,9 +15,14 @@ var F = g.Layers.Foreground;
 // storing reference to Utility methods
 const Util = g.Util;
 
+// importing ball container test
+const BallContainer = require('./Balls').BallContainer;
+
+var bc = null;
+
 g.Setup(() => {
 
-  console.log("Setting Up Grageo");
+  // console.log("Setting Up Grageo");
 
   // setting canvas parent container
   g.Control.parent('grageo-container');
@@ -34,34 +30,26 @@ g.Setup(() => {
   // force full screen ( is usually automated )
   g.Control.setFullScreen();
 
-})
+  // instantiating new ball container
+  bc = new BallContainer();
 
-// rectangle object
-var rec = new Quad(0,0,80,200);
+})
 
 // update method hook
 g.Control.setUpdate((delta) => {
 
-  // set rectangle position
-  rec.setPos(Util.mouse())
-
-  rec.setOffset(1);
-
-  //
-  rec.update(delta)
+  bc.update(delta);
 
 })
 
 // draw loop callback
 g.Control.setDraw (() => {
 
-  // B.clear();
+  B.clear();
   M.clear();
-  // F.clear();
+  F.clear();
 
-  //
-  rec.setColour(new Colour(0,0,0))
-  rec.draw();
+  bc.draw();
 
 })
 

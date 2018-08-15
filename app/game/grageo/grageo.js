@@ -1,4 +1,5 @@
 
+
 var Vector = require('./vector');
 
 var CanvasLayer = require('./canvaslayer');
@@ -396,6 +397,10 @@ var grageo = (function(){
     return Math.round(Util.random(min,max))
   }
 
+  Util.randomScreen = () => {
+    return new Vector(Util.random(0,Util.size().x),Util.random(0,Util.size().y))
+  }
+
   Util.pyth = (v) => {
     return Math.sqrt((v.x * v.x) + (v.y + v.y))
   }
@@ -408,6 +413,11 @@ var grageo = (function(){
   // converts @degree to radians
   Util.radians = (degree) => {
     return degree*(Math.PI/180);
+  }
+
+  // pythagorean distance
+  Util.dist = (v1,v2) => {
+    return Math.sqrt(Math.pow(v2.x-v1.x,2)+Math.pow(v2.y-v1.y,2));
   }
 
   // when page is ready
