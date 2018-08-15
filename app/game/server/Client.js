@@ -31,16 +31,20 @@ class Client {
 
      //check if socket.id is associated to any account in the db
      // if true : remove the socket.id and set as account status : offline
-     console.log(`Client ${this.ip} - Disconnected! `);
+     this.disconnectClient();
 
     });
+  }
+
+  disconnectClient(){
+    console.logDD('CLIENT',`Client ${this.ip} disconnected.`);
   }
 
 
   // hook in for receiving various emissions from the client
   setEmitHook(hook,callback){
 
-    console.log(`Hook ${hook}, Created for ${this.ip}!`);
+    console.logDD('CLIENT',`Hook ${hook}, Created for ${this.ip}!`);
 
     if(hook && callback){
 
@@ -95,11 +99,28 @@ class Client {
     // this condition will allow client to remain disconnected until a reconnect
     // max has been waited
     if(this.dcMax <= this.dcAttempts){
-      console.log(`[ CLIENT ] : Client ${this.ip} disconnected.`);
+      this.disconnectClient();
       return this.socket.connected;
     } else {
       return true;
     }
+
+  }
+
+  // this method takes a socket and compares if same as client
+  // n.b this doesnt mean the socket object is the exact same!
+  compare(socket){
+
+    // comparing socket and client ip
+    let same = client.ip === socket.handshake.address;
+
+    // if IP is the same refresh socked instead of reinstantiating
+    if(same){
+      this.refreshSocket(socket);
+    }
+
+    // returning answer
+    return same;
 
   }
 

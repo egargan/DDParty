@@ -64,17 +64,22 @@ class Lobby {
   // polling existing clients for connectivity
   pollClients(force){
 
-    // waiting for delay in time to occur
+    // waiting for time delay for check to pass or if the force check
+    // flag is true
     if(force || Date.now() - this.pollLastCheck >= this.polldelay){
 
+      // updating last time since poll check
       this.pollLastCheck = Date.now();
 
-      for(let ci = 0 ; ci < this.clients.length ; ci++){
+      // iterating over clients
+      for(let ci = this.clients.length-1 ; ci >= 0 ; ci--){
+
         // checking if client has disconnected
         if(!this.clients[ci].isConnected()){
+
           console.logDD('LOBBY',`Client ${this.clients[ci].id} has disconnected!`)
 
-
+          // if disconnected splice out client from list of clients
           this.clients.splice(ci,1);
         }
 
@@ -97,14 +102,9 @@ class Lobby {
 
     for(let client of this.clients){
 
-      if(client.ip === socket.handshake.address){
+      let exist = client.compare(socket);
 
-        // refresh socket for connection purposes
-        client.refreshSocket(socket);
-        // return found
-        return true;
-
-      }
+      if(exist) return true;
 
     }
     // return false;
@@ -112,9 +112,14 @@ class Lobby {
   }
 
   addClient(socket){
+
+
     if(!this.checkExists(socket)){
+      console.logDD('LOBBY','New Client Added to Lobby!');
       this.clients.push(new Client(this.clientIndex,socket))
       this.clientIndex++;
+    } else {
+      console.logDD('LOBBY','Client Already Exists!');
     }
   }
 
