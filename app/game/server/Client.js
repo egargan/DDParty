@@ -1,5 +1,5 @@
 
-var util = require('../../utilities.js');
+var Util = require('../../utilities.js');
 
 class Client {
 
@@ -82,7 +82,7 @@ class Client {
 
   // method to test communication has occured
   testCom(){
-    let h = util.hashObj(this.socket)
+    let h = Util.hashObj(this.socket)
     // console.log(`Client ${this.id} : Test Com With ${h}`)
     this.socket.emit('test',h)
   }

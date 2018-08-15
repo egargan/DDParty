@@ -1,7 +1,7 @@
 
 var Client = require('./Client.js')
 
-var gameController = require('./gameController.js')
+var gameController = require('./GameController.js')
 
 class Lobby {
 
@@ -47,7 +47,9 @@ class Lobby {
       room.update();
 
       if(room.dead){
-        console.log("Room Dead!");
+        console.logDD('LOBBY','Room Dead!')
+
+
         this.rooms.splice(gi,1);
       }
 
@@ -70,7 +72,9 @@ class Lobby {
       for(let ci = 0 ; ci < this.clients.length ; ci++){
         // checking if client has disconnected
         if(!this.clients[ci].isConnected()){
-          console.log(`Client ${this.clients[ci].id} has disconnected!`)
+          console.logDD('LOBBY',`Client ${this.clients[ci].id} has disconnected!`)
+
+
           this.clients.splice(ci,1);
         }
 
@@ -123,7 +127,10 @@ class Lobby {
     // checking number of active clients are enough to make game
     if(this.canBuildRoom()){
 
-      console.log("[ LOBBY ] : Creating New Game!");
+      // console.log("[ LOBBY ] : Creating New Game!");
+
+      console.logDD('LOBBY','Creating New Game!')
+
 
       this.roomIndex++;
 
@@ -172,9 +179,13 @@ class Lobby {
   }
 
   show(){
-    console.log(`Lobby Size: ${this.size()}`);
+
+    console.logDD('LOBBY',`Lobby Size: ${this.size()}`)
+
+
     for(let client of this.clients)
-      console.log(client.ip);
+      console.logDD('LOBBY',`Client - ${client.ip}`)
+
   }
 
 }

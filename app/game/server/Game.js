@@ -1,12 +1,14 @@
 
+// this class acts as a base object for any game running on the server handling
+// all generic activities a game may need to have to operate correctly
+
+const MessageType = require('../shared/message')
+
 class Game {
 
   constructor() {
-
     this.bundle = null;
-
     this.playerCount = 0;
-
   }
 
   // getter for game bundle
@@ -22,35 +24,40 @@ class Game {
   // setup method
   setup(){
 
+    console.logDD('GAME','Game Setup!');
+
+    this.bundle = {
+      tick:0
+    }
+
   }
 
-  // setup initial players passing in array of clients
+  // setup initial players involving anything game related
   initialisePlayers(clients){
 
-    console.log("Sending Client Setup Bundle");
+    console.logDD('GAME','Sending Client Setup Bundle!');
 
     // setting local games player count;
     this.playerCount = clients.length;
 
-    // player incrementing
-    let playerIndex = 0;
-
-    let bundle = this.getBundle();
-
+    // iterating over client array
     for(var client of clients){
 
-      // incrementing player
-      bundle.player = ++playerIndex;
-
       // transmitting setup bundle to client
-      client.transmit(MessageType.INIT,bundle);
+      client.transmit(MessageType.INIT,this.getBundle());
 
     }
 
+  }
+
+  update(){
+
+    this.bundle.tick++;
+
+    return this.getBundle();
 
   }
 
-
-
-
 }
+
+module.exports = Game;

@@ -3,8 +3,6 @@ var methods = {}
 
 methods.init = (server) => {
 
-  methods.server = server;
-
   // this method returns the last element in the array
   Array.prototype.last = function () {
     return this[this.length-1]
@@ -23,6 +21,26 @@ methods.init = (server) => {
     return this;
   }
 
+  console.logDD = (owner,message,index) => {
+
+    let pad = ' ';
+    pad = pad.repeat(10 - owner.length);
+
+    console.log(
+      '[',
+        new Date().toLocaleDateString("en-US"),
+        new Date().toLocaleTimeString('en-US'),
+      ']',
+      owner+pad+' ',
+      ' - ',
+      message
+    );
+  }
+
+}
+
+methods.storeServer = (server) => {
+  methods.server = server;
 }
 
 var hash = require('object-hash');

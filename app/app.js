@@ -25,7 +25,7 @@ app.use(logger('dev'));
 // setting up request routing
 require('./routes').init(app);
 
-var serverController = require('./game/server/serverController.js')
+var serverController = require('./game/server/ServerController.js')
 
 // setting server controller frame rate
 serverController.init(60);

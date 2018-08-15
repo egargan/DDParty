@@ -5,7 +5,7 @@ function init(app){
 
   var path = require('path');
 
-  console.log("Initialising Router");
+  console.logDD('ROUTER','Initialising Router');
 
   // uncomment after placing your favicon in /public
   // app.use(favicon(path.join(__dirname, '/../public', 'favicon.ico')));
