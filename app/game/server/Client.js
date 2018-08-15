@@ -22,6 +22,11 @@ class Client {
     // max number of permitted disconnections
     this.dcMax = 10;
 
+    // collection of emit hooks
+    this.hooks = {
+
+    }
+
     // run reup
     this.setup();
 
@@ -29,13 +34,10 @@ class Client {
 
   setup(){
 
-    this.socket.on('disconnect',() => {
-
-     //check if socket.id is associated to any account in the db
-     // if true : remove the socket.id and set as account status : offline
-     this.disconnectClient();
-
-    });
+    // saving emit hook for disconnect event
+    this.setEmitHook('disconnect',() => {
+      this.disconnectClient();
+    })
 
   }
 
@@ -49,18 +51,38 @@ class Client {
 
     console.logDD('CLIENT',`Hook : ${hook}, Created for : ${this.ip}!`);
 
+    // checking hook or callback exist
     if(hook && callback){
 
-      // deregistering hook incase its already in use
-      if(this.socket.listeners(hook))
-        this.socket.removeListener(hook,callback);
+      // storing hook locally
+      this.hooks[hook] = callback;
 
-      // registering new hook
-      this.socket.on(hook,(payload) => {
-        callback(payload)
-      });
+      // validating and saving hook to callback
+      this.saveEmitHook(hook,callback);
 
     }
+
+  }
+
+  checkExistingHook(hook,callback){
+    // deregistering hook incase its already in use
+    if(this.socket.listeners(hook)){
+      this.socket.removeListener(hook,callback);
+
+    }
+
+  }
+
+  // actual addition of emit hook to socket
+  saveEmitHook(hook,callback){
+
+    // checking and unregistering duplicate hook
+    this.checkExistingHook(hook,callback)
+
+    // registering new hook
+    this.socket.on(hook,(payload) => {
+      callback(payload)
+    });
 
   }
 
@@ -71,18 +93,20 @@ class Client {
     }
   }
 
-  // hook in for transmitting data back to client
-  setTransmitHook(hook,payload){
-    if(hook && payload){
-      this.socket.emit(hook,payload);
-    }
-  }
-
   // this method should attempt to referesh the connection
   // but currently sends a test commuinication
   refreshSocket(socket){
+
+    // replacing current socket reference with new one
     this.socket = socket || this.socket;
-    this.testCom();
+
+    // passing all hooks to new socket
+    for(var hook in this.hooks){
+      // re-establishing hook and callback
+      this.saveEmitHook(hook,this.hooks[hook]);
+
+    }
+
   }
 
 

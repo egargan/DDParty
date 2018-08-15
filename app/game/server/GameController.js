@@ -105,10 +105,7 @@ class gameController {
 
     this.clients.push(client)
 
-    client.transmit(
-      MessageType.GAMETYPE,
-      this.game.getType()
-    );
+    client.transmit(MessageType.GAMETYPE,this.game.getType());
 
   }
 

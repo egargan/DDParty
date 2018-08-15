@@ -250,10 +250,12 @@ class Lobby {
 
     if(client){
 
-      console.logDD('LOBBY','Client Already Exists!');
+      console.logDD('LOBBY','Existing Client Added to Lobby!');
+
+      client.refreshSocket(socket);
 
       this.clientRoomKeyHook(client);
-      
+
       return
 
     } else {
@@ -299,6 +301,11 @@ class Lobby {
           }
 
         }
+
+      } else {
+
+        console.logDD("LOBBY",'Client Entered Wrong Room');
+        client.transmit(MessageType.WARNING,'Room Does Not Exist!')
 
       }
 

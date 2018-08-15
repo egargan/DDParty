@@ -10,6 +10,8 @@ module.exports = (function(){
 
   var roomKeySubmitInput = null;
 
+  var bannerText = null
+
   var socket = null;
 
   // object of functions ( if we want to export them )
@@ -28,6 +30,9 @@ module.exports = (function(){
 
     // setting key down event to fire on submit method
     roomKeySubmitInput.onclick = Methods.onRoomKeySubmit;
+
+    // storing reference to warning text banner
+    bannerText = document.getElementsByClassName('warning-banner-text')[0];
 
   }
 
@@ -61,6 +66,25 @@ module.exports = (function(){
     roomKeyOverlay.style.display = 'none';
   }
 
+  Methods.displayWarning = (warning) => {
+
+    // setting banner text
+    bannerText.text = warning;
+    bannerText.style.display = 'inline';
+
+    setTimeout(() => {
+      console.log('Clearing Banner!');
+      Methods.clearWarning()
+    },5000)
+  }
+
+  Methods.clearWarning = () => {
+    // setting banner text
+    bannerText.text = '';
+    bannerText.style.display = 'none';
+  }
+
+
   // when page load is complete
   window.onload = () => {
 
@@ -85,6 +109,12 @@ module.exports = (function(){
       // call to join lobby on server side
       socket.emit(MessageType.UPDATE,(bundle) => {
         console.log("UPDATE",bundle);
+      });
+
+      // when server sends a warning message to the client
+      socket.on(MessageType.WARNING,(warning) => {
+        // parsing through gui
+        Methods.displayWarning(warning);
       });
 
       // setup module
