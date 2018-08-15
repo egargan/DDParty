@@ -9,6 +9,11 @@ class Game {
   constructor() {
     this.bundle = null;
     this.playerCount = 0;
+    this.type = 'generic'
+  }
+
+  getType(){
+    return this.type;
   }
 
   // getter for game bundle
@@ -19,6 +24,10 @@ class Game {
   // setter for game bundle
   setBundle(bundle){
     this.bundle = bundle;
+  }
+
+  setType(type){
+    this.type = type;
   }
 
   // setup method

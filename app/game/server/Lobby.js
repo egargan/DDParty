@@ -109,7 +109,7 @@ class Lobby {
     for(let client of this.clients){
 
       // checking if client exists and returning true if so
-      if(client.compare(socket)) return true;
+      if(client.compare(socket)) return client;
 
     }
 
@@ -147,9 +147,6 @@ class Lobby {
     game.addScreen(socket,key);
 
     console.logDD('LOBBY',`Creating Room - ${key}!`)
-
-    // setting up lobby object
-    game.setup();
 
     // adding room to room collection
     this.rooms.push(game);
@@ -231,11 +228,14 @@ class Lobby {
 
     // Loops through all active rooms
     for(let room of this.rooms) {
+
       // Checks their key against the new key
       if (room.screen.getRoomKey() === key) {
+
         // The keys match meaning it already exists
-        return true;
+        return room;
       }
+
     }
 
     // No room is currently using the same key
@@ -245,17 +245,62 @@ class Lobby {
 
   addClient(socket){
 
-    if(!this.checkExists(socket)){
-      console.logDD('LOBBY','New Client Added to Lobby!');
-      this.clients.push(new Client(this.clientIndex,socket))
-      this.clientIndex++;
-    } else {
+    let client = this.checkExists(socket)
+
+    if(client){
+
       console.logDD('LOBBY','Client Already Exists!');
+
+      this.clientRoomKeyHook(client);
+      
+      return
+
+    } else {
+
+      console.logDD('LOBBY','New Client Added to Lobby!');
+
+      client = new Client(this.clientIndex,socket);
+
+      this.clients.push(client)
+
+      this.clientIndex++;
+
+      this.clientRoomKeyHook(client);
+
     }
 
+  }
+
+  clientRoomKeyHook(client){
+
     // attempt sending of roomkey
-    this.clients.last().setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
-      console.logDD('LOBBY',"CLIENT SENT ROOMKEY: "+key);
+    client.setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
+
+      // room the key potentially belongs to
+      let room = this.checkIsExistingKey(key)
+
+      // adding client to room
+      if(room) {
+
+        // iterating over all connected clients in lobby
+        for(var c = this.clients.length-1 ; c >= 0 ; c-- ){
+
+          // checking if current element is the client being added
+          if(this.clients[c] === client){
+
+            console.logDD('LOBBY',`Client ${client.ip} Joined Room ${key}`);
+
+            // splicing client out of lobby pool and adding to room pool
+            room.addClient(this.clients[c]);
+
+            this.clients.splice(c,1);
+
+          }
+
+        }
+
+      }
+
     })
 
   }

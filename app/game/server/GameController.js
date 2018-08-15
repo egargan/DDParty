@@ -1,7 +1,5 @@
 
-// tictactoe server class
-// const TicTacToe = require('./TicTacToe')
-
+// generic game class
 const Game = require('./Game');
 
 // class responsible for storing screen details
@@ -35,11 +33,12 @@ class gameController {
     // setting up game
     this.game = new Game()
 
+    // setting up game object
+    this.game.setup();
+
   }
 
   setup(){
-
-    this.game.setup();
 
     // this method when called will initialise all the players of a game
     this.game.initialisePlayers(this.clients)
@@ -56,9 +55,8 @@ class gameController {
 
     // updating clients with current game state
     for(var client of this.clients){
-      client.setTransmitHook(MessageType.UPDATE,updateBundle)
+      client.transmit(MessageType.UPDATE,updateBundle)
     }
-
 
   }
 
@@ -104,13 +102,20 @@ class gameController {
   }
 
   addClient(client){
+
     this.clients.push(client)
+
+    client.transmit(
+      MessageType.GAMETYPE,
+      this.game.getType()
+    );
+
   }
 
   destroy(){
     // console.log(`[ GAME ] : ${this.id} has Shutdown, migrating clients!`);
 
-    console.logDD('GAME CONT',`${this.id} has Shutdown, migrating clients!`)
+    console.logDD('GAME CONT',`${this.roomKey} has Shutdown, migrating clients!`)
 
 
     this.dead = true;

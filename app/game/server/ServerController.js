@@ -76,7 +76,7 @@ var serverController = ( function() {
       lobby.addScreen(socket);
 
       // outputting lobby details
-      lobby.show();
+      // lobby.show();
 
     })
 
@@ -87,7 +87,7 @@ var serverController = ( function() {
       lobby.addClient(socket);
 
       // outputting lobby details
-      lobby.show();
+      // lobby.show();
 
     })
 

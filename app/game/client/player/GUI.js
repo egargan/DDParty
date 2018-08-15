@@ -4,6 +4,8 @@ const MessageType = require('../../shared/message');
 
 module.exports = (function(){
 
+  var roomKeyOverlay = null;
+
   var roomKeyTextInput = null;
 
   var roomKeySubmitInput = null;
@@ -14,6 +16,9 @@ module.exports = (function(){
   var Methods = {}
 
   Methods.setup = () => {
+
+    // storing reference to overlay container for room key input
+    roomKeyOverlay = document.getElementsByClassName('key-input-overlay')[0];
 
     // storing reference to enter button for room key
     roomKeySubmitInput = document.getElementsByClassName('key-input')[0];
@@ -52,6 +57,10 @@ module.exports = (function(){
     return true;
   }
 
+  Methods.hideOverlay = () => {
+    roomKeyOverlay.style.display = 'none';
+  }
+
   // when page load is complete
   window.onload = () => {
 
@@ -63,9 +72,19 @@ module.exports = (function(){
 
       console.log("GUI - Socket Connected!");
 
+      socket.on(MessageType.GAMETYPE,(type) => {
+        console.log('Game Type Received!',type);
+        Methods.hideOverlay();
+      })
+
       // call to join lobby on server side
       socket.emit(MessageType.JOINPLAYER,() => {
         // nothing to do
+      });
+
+      // call to join lobby on server side
+      socket.emit(MessageType.UPDATE,(bundle) => {
+        console.log("UPDATE",bundle);
       });
 
       // setup module

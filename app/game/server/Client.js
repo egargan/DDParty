@@ -37,10 +37,6 @@ class Client {
 
     });
 
-    this.socket.on(MessageType.ROOMKEYINPUT,(key)=>{
-      console.log('Client Attempted Roomkey : ',key);
-    })
-
   }
 
   disconnectClient(){
@@ -51,7 +47,7 @@ class Client {
   // hook in for receiving various emissions from the client
   setEmitHook(hook,callback){
 
-    console.logDD('CLIENT',`Hook ${hook}, Created for ${this.ip}!`);
+    console.logDD('CLIENT',`Hook : ${hook}, Created for : ${this.ip}!`);
 
     if(hook && callback){
 
