@@ -3,8 +3,8 @@
 require('../../scss/screen.scss')
 
 // main file for launching game code
-require('./client/Balls.js');
-require('./client/app.js');
+require('./client/screen/Balls.js');
+require('./client/screen/app.js');
 
 // importing shared files
 require('./shared/message.js')

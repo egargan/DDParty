@@ -1,11 +1,13 @@
 
+const glib = require('../../grageo');
+
 // grageo main module
-const grageo = require('../grageo').grageo;
+const grageo = glib.grageo;
 
 // importing useful modules
-const Vector = require('../grageo').vector;
-const Colour = require('../grageo').colour;
-const Entity = require('../grageo').basic.Entity;
+const Vector = glib.vector;
+const Colour = glib.colour;
+const Entity = glib.basic.Entity;
 
 // storing access to middle canvas layer
 const M = grageo.Layers.Middle;

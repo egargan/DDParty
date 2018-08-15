@@ -1,8 +1,9 @@
 
 const MessageType = {
-  JOINPLAYER :'join-player',
-  JOINSCREEN : 'join-screen',
-  ROOMKEY    : 'roomkey',
+  JOINPLAYER   :'join-player',
+  JOINSCREEN   : 'join-screen',
+  ROOMKEY      : 'roomkey',
+  ROOMKEYINPUT : 'roomkey',
   INIT   :'initialise-game',
   UPDATE :'update-game',
   PAUSE      :'pause-game',

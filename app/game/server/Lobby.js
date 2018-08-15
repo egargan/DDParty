@@ -3,6 +3,8 @@ var Client = require('./Client.js')
 
 var gameController = require('./GameController.js')
 
+var MessageType = require('../shared/message')
+
 class Lobby {
 
   constructor(roomSize) {
@@ -197,7 +199,6 @@ class Lobby {
 
   addClient(socket){
 
-
     if(!this.checkExists(socket)){
       console.logDD('LOBBY','New Client Added to Lobby!');
       this.clients.push(new Client(this.clientIndex,socket))
@@ -205,6 +206,12 @@ class Lobby {
     } else {
       console.logDD('LOBBY','Client Already Exists!');
     }
+
+    // attempt sending of roomkey
+    this.clients.last().setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
+      console.logDD('LOBBY',"CLIENT SENT ROOMKEY: "+key);
+    })
+
   }
 
   canBuildRoom(){

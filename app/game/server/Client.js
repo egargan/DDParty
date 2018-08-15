@@ -1,4 +1,6 @@
 
+var MessageType = require('../shared/message')
+
 var Util = require('../../utilities.js');
 
 class Client {
@@ -34,6 +36,11 @@ class Client {
      this.disconnectClient();
 
     });
+
+    this.socket.on(MessageType.ROOMKEYINPUT,(key)=>{
+      console.log('Client Attempted Roomkey : ',key);
+    })
+
   }
 
   disconnectClient(){
@@ -111,7 +118,7 @@ class Client {
   compare(socket){
 
     // comparing socket and client ip
-    let same = client.ip === socket.handshake.address;
+    let same = this.ip === socket.handshake.address;
 
     // if IP is the same refresh socked instead of reinstantiating
     if(same){

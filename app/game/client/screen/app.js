@@ -1,9 +1,9 @@
 
-// // importing main grageo index
-const grageoLibrary = require('../grageo');
+// importing main grageo index
+const grageoLibrary = require('../../grageo');
 
 // message enum for consistency between server and client communications
-const MessageType = require('../shared/message');
+const MessageType = require('../../shared/message');
 
 // storing grageo main module
 const g = grageoLibrary.grageo;
@@ -21,6 +21,7 @@ const Util = g.Util;
 
 // importing ball container test
 const BallContainer = require('./Balls').BallContainer;
+
 
 // socket initialisation
 const socket = io();

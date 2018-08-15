@@ -70,19 +70,26 @@ var serverController = ( function() {
   // new connection entry point
   io.registerConnection((socket) => {
 
-    // when a client requests to join the lobby
+    // when a screen client requests to join the lobby
     socket.on(MessageType.JOINSCREEN,() => {
 
       lobby.addScreen(socket);
-
-      // adding client to lobby
-      // lobby.addClient(socket);
 
       // outputting lobby details
       lobby.show();
 
     })
 
+    // when a client requests to join the lobby
+    socket.on(MessageType.JOINPLAYER,() => {
+
+      // adding client to lobby
+      lobby.addClient(socket);
+
+      // outputting lobby details
+      lobby.show();
+
+    })
 
 
   })
