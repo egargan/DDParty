@@ -21,6 +21,9 @@ class Lobby {
     // game pool
     this.rooms = [];
 
+    // currently active room codes
+    this.roomCodes = new Map();
+
     // required room size for game
     this.roomSize = roomSize;
 
@@ -137,7 +140,8 @@ class Lobby {
 
     });
 
-    let key = this.checkRoomKey();
+    let key = this.generateRoomKey();
+    // console.log("Key: " + key);
 
     // adding main screen connection to client
     game.addScreen(socket,key);
@@ -152,50 +156,92 @@ class Lobby {
 
   }
 
+  // Generates a unique room code
   generateRoomKey(){
 
-    let key = '';
+    let key;
 
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    do {
+      // Generate a new room code
+      key = this.generateKeyString();
 
-    for(var char = 0 ; char < 10 ; char++){
-      key += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
+      // If the room code contains any banned words or is
+      // already in use, regenerate a new code
+    } while (this.checkIsInDictionary(key) || this.checkIsExistingKey(key));
 
     return key;
-
   }
 
-  checkRoomKey(){
+  // Generates a new key
+  // Returns a key which is a string of length 5 consisting
+  // of uppercase latin letters
+  generateKeyString() {
+    let key = '';
 
-    let success = false;
+    // The possible symbols / character set the key can use
+    let symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    let key = 0;
+    // The length of the key
+    let keyLength = 5;
 
-    // repeat until successful
-    while(!success){
-
-      // success state;
-      success = false;
-
-      // generate key`
-      key = this.generateRoomKey();
-
-      // iterate over rooms
-      for(var room of this.rooms){
-
-        // if room key is equal to new key
-        if(room.screen.getRoomKey() !== key)  success = true;
-
-      }
-
-      if(this.rooms.length === 0) success = true;
-
+    for(let char = 0 ; char < keyLength ; char++){
+      // Chooses a random symbol from the set and appends it to the
+      // key. This process is repeated until the desired length is reached
+      key += symbols.charAt(Math.floor(Math.random() * symbols.length));
     }
 
-    return key
-
+    // Returns the key
+    return key;
   }
+
+  // Checks the given key to see if it contains any banned phrases
+  // Returns true if a banned word has been found in the key, else false
+  checkIsInDictionary(key) {
+    // List of words that should not be contained within the key
+    let bannedPhrases = [
+      'ASS',
+      'ARSE',
+      'BITCH',
+      'CUNT',
+      'FUCK',
+      'JESUS',
+      'NIGGA',
+      'RAPE',
+      'SHIT',
+      'TWAT'
+    ]
+
+    // Goes through the list of banned phrases and sees if the key
+    // contains any of them
+    for (let word of bannedPhrases) {
+      if (key.includes(word)) {
+        // If the key does include a banned word, returns true
+        return true;
+      }
+    }
+
+    // If no words were found
+    return false;
+  }
+
+  // Checks through all currently created rooms and checks if
+  // the key already exists
+  // Returns true if an existing room already is using the key, else false
+  checkIsExistingKey(key) {
+
+    // Loops through all active rooms
+    for(let room of this.rooms) {
+      // Checks their key against the new key
+      if (room.screen.getRoomKey() === key) {
+        // The keys match meaning it already exists
+        return true;
+      }
+    }
+
+    // No room is currently using the same key
+    return false;
+  }
+
 
   addClient(socket){
 
