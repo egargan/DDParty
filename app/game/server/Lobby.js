@@ -173,15 +173,15 @@ class Lobby {
   // Returns a key which is a string of length 5 consisting
   // of uppercase latin letters
   generateKeyString() {
-    let key = '';
-
     // The possible symbols / character set the key can use
-    let symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     // The length of the key
-    let keyLength = 5;
+    const keyLength = 5;
 
-    for(let char = 0 ; char < keyLength ; char++){
+    let key = '';
+
+    for(let char = 0; char < keyLength; char++){
       // Chooses a random symbol from the set and appends it to the
       // key. This process is repeated until the desired length is reached
       key += symbols.charAt(Math.floor(Math.random() * symbols.length));
@@ -195,7 +195,7 @@ class Lobby {
   // Returns true if a banned word has been found in the key, else false
   checkIsInDictionary(key) {
     // List of words that should not be contained within the key
-    let bannedPhrases = [
+    const bannedPhrases = [
       'ASS',
       'ARSE',
       'BITCH',
@@ -223,7 +223,8 @@ class Lobby {
 
   // Checks through all currently created rooms and checks if
   // the key already exists
-  // Returns true if an existing room already is using the key, else false
+  // Returns false if no room with the key was found, else the room with the
+  // same key is returned
   checkIsExistingKey(key) {
 
     // Loops through all active rooms
