@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500');
+
+@import "am_colours";
+
+@font-face {
+  font-family: 'glyphicons';
+  src: url('/font/glyphicons.woff2') format('woff2');
+}
+
+* {
+  font-family: 'Raleway', sans-serif;
+  box-sizing: border-box;
+
+  margin: 0;
+  padding: 0;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: auto auto;
+
+  min-width: 100vw;
+  min-height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+.control {
+
+  color: $col_light;
+  // font-size: 5em;
+  text-align: center;
+
+  &.left {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    background-color: $col_grass;
+  }
+
+  &.right {
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    background-color: $col_marin;
+  }
+
+  &.thrust {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    background-color: $col_blood;
+  }
+
+  &.fire {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    background-color: $col_pink;
+  }
+}
+
+.button {
+  border: none;
+  color: $col_light;
+  padding: 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+
+  width: 100%;
+  height: 100%;
+
+  &:hover {
+    background-color: $col_medium;
+  }
+}

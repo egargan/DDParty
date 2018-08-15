@@ -16,7 +16,8 @@ module.exports = {
 	mode: 'production',
 	entry: {
 		home: './src/bundle.js',
-		screen:'./app/game/bundle.js',
+		screen:'./app/game/bundle_screen.js',
+		player:'./app/game/bundle_player.js',
 	},
   output: {
     path: path.join(__dirname, '/public/js/'),
