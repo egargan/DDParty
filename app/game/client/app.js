@@ -8,6 +8,9 @@ const MessageType = require('../shared/message');
 // storing grageo main module
 const g = grageoLibrary.grageo;
 
+const Vector = grageoLibrary.vector;
+const Colour = grageoLibrary.colour;
+
 // storing reference to canvas layers
 var B = g.Layers.Background;
 var M = g.Layers.Middle;
@@ -22,14 +25,21 @@ const BallContainer = require('./Balls').BallContainer;
 // socket initialisation
 const socket = io();
 
+var RoomKey = '';
+
 socket.on('connect',(data) => {
 
   // socket connection ready
 
   // call to join lobby on server side
-  socket.emit(MessageType.JOIN,() => {
+  socket.emit(MessageType.JOINSCREEN,() => {
     // nothing to do
   });
+
+  socket.on(MessageType.ROOMKEY,(roomkey) => {
+    console.log("Room Key Recieved - ",roomkey);
+    RoomKey = roomkey;
+  })
 
   // initialising tictactoe
   socket.on(MessageType.INIT,(bundle) => {
@@ -80,6 +90,14 @@ socket.on('connect',(data) => {
 
     //
     bc.draw();
+
+    M.fillCol(new Colour(255,255,255,0.5));
+    M.rect(new Vector(),Util.size());
+
+    M.fillCol(new Colour(0,0,0,1));
+    // drawing room key
+    M.text(100,'Raleway','center',new Vector(Util.size().x/2,Util.size().y/3),'Room Key:');
+    M.text(200,'Raleway','center',new Vector(Util.size().x/2,Util.size().y*1.5/2),RoomKey);
 
   })
 

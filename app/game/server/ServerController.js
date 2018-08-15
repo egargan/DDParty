@@ -53,7 +53,7 @@ var serverController = ( function() {
     // when frame count hits fps
     if(params.framecount % Math.ceil(params.fps) === 0){
       // `delta` is the delta time from the last frame
-      console.logDD('LOOP',`Frame : ${params.framecount}, Delta : ${delta}`);
+      // console.logDD('LOOP',`Frame : ${params.framecount}, Delta : ${delta}`);
     }
 
   }
@@ -71,14 +71,19 @@ var serverController = ( function() {
   io.registerConnection((socket) => {
 
     // when a client requests to join the lobby
-    socket.on(MessageType.JOIN,() => {
+    socket.on(MessageType.JOINSCREEN,() => {
+
+      lobby.addScreen(socket);
 
       // adding client to lobby
-      lobby.addClient(socket);
+      // lobby.addClient(socket);
 
       // outputting lobby details
       lobby.show();
+
     })
+
+
 
   })
 

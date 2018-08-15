@@ -32,30 +32,28 @@ class Lobby {
 
   // UPDATING ALL GAME STATES
 
-  update(){
+  update(delta){
 
     // checking all non-gaming clients for connectivity
     this.pollClients(false);
 
     // attempt to build room
-    this.buildRoom();
+    // this.buildRoom();
 
     // updating all game loop methods
     for(let gi = 0 ; gi < this.rooms.length ; gi++){
+
       let room = this.rooms[gi];
 
-      room.update();
+      room.update(delta);
 
       if(room.dead){
         console.logDD('LOBBY','Room Dead!')
-
 
         this.rooms.splice(gi,1);
       }
 
     }
-
-
 
   }
 
@@ -89,10 +87,12 @@ class Lobby {
 
   }
 
+  // return room size ( defunct )
   getRoomSize(){
     return this.roomSize;
   }
 
+  // set room size ( defunct )
   setRoomSize(roomSize){
     this.roomSize = roomSize;
   }
@@ -100,15 +100,99 @@ class Lobby {
   // checking client already exists in the client pool ( for reconnecting clients )
   checkExists(socket){
 
+    // iterating over client collection
     for(let client of this.clients){
 
-      let exist = client.compare(socket);
-
-      if(exist) return true;
+      // checking if client exists and returning true if so
+      if(client.compare(socket)) return true;
 
     }
-    // return false;
+
+    // otherwise return false;
     return false;
+  }
+
+  // this method is ran when a new screen object joins the server
+  addScreen(socket){
+
+    // incrementing room index;
+    this.roomIndex++;
+
+    // create new game Object
+    let game = new gameController(this.roomIndex);
+
+    // if game destroys itself run this callback
+    game.setDeconstruction( (game,clients) => {
+
+      // migrating remaining clients back to lobby
+      for(let client of clients){
+        // checking client is worth migrating
+        if(client.isConnected()){
+          // pushing client back into pool
+          this.clients.push(client);
+        }
+      }
+
+    });
+
+    let key = this.checkRoomKey();
+
+    // adding main screen connection to client
+    game.addScreen(socket,key);
+
+    console.logDD('LOBBY',`Creating Room - ${key}!`)
+
+    // setting up lobby object
+    game.setup();
+
+    // adding room to room collection
+    this.rooms.push(game);
+
+  }
+
+  generateRoomKey(){
+
+    let key = '';
+
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for(var char = 0 ; char < 10 ; char++){
+      key += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return key;
+
+  }
+
+  checkRoomKey(){
+
+    let success = false;
+
+    let key = 0;
+
+    // repeat until successful
+    while(!success){
+
+      // success state;
+      success = false;
+
+      // generate key`
+      key = this.generateRoomKey();
+
+      // iterate over rooms
+      for(var room of this.rooms){
+
+        // if room key is equal to new key
+        if(room.screen.getRoomKey() !== key)  success = true;
+
+      }
+
+      if(this.rooms.length === 0) success = true;
+
+    }
+
+    return key
+
   }
 
   addClient(socket){
@@ -170,27 +254,19 @@ class Lobby {
     return false;
   }
 
-  trimLobby(){
-    // trimming back of lobby array
-    // this.clients.inwardSplice(0,2)
-    this.clients.splice(this.clients.length-1,1);
-    this.clients.splice(this.clients.length-1,1);
+  // defunct at the momment
+  trimLobby(){}
 
-  }
-
-
+  // return the number of current clients
   size(){
     return this.clients.length;
   }
 
+  // print out lobby clients
   show(){
-
     console.logDD('LOBBY',`Lobby Size: ${this.size()}`)
-
-
     for(let client of this.clients)
       console.logDD('LOBBY',`Client - ${client.ip}`)
-
   }
 
 }

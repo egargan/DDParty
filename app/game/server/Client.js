@@ -75,12 +75,11 @@ class Client {
     }
   }
 
+  // this method should attempt to referesh the connection
+  // but currently sends a test commuinication
   refreshSocket(socket){
-
     this.socket = socket || this.socket;
-
     this.testCom();
-
   }
 
 

@@ -4,6 +4,9 @@
 
 const Game = require('./Game');
 
+// class responsible for storing screen details
+const Screen = require('./Screen');
+
 // importing module enum for message types
 const MessageType = require('../shared/message');
 
@@ -13,6 +16,9 @@ class gameController {
 
     //
     this.id = id;
+
+    // socket connection for screen
+    this.screen = null;
 
     //
     this.clients = [];
@@ -42,6 +48,7 @@ class gameController {
 
   update(){
 
+    // poll both clients and the screen for connectivity
     this.pollClients(false)
 
     // updating game instance
@@ -66,20 +73,19 @@ class gameController {
       //
       this.pollLastCheck = Date.now();
 
+      // checking if screen is still connected, if not destroy room
+      if(!this.screen.isConnected()){
+        this.destroy();
+        return;
+      }
+
       //
       for(let ci = this.clients.length-1 ; ci > 0 ; ci--){
 
         // checking if client has disconnected
         if(!this.clients[ci].isConnected()){
-
           console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
-
-          // this.clients[ci].socket = null;
-          // this.clients[ci] = null;
-          // this.clients.splice(ci,1);
-
           this.destroy();
-
         }
 
       }
@@ -90,6 +96,11 @@ class gameController {
 
   setDeconstruction(callback){
     this.deconstruction = callback
+  }
+
+  addScreen(socket,key){
+    this.screen = new Screen(0,socket,key);
+    this.screen.setup();
   }
 
   addClient(client){
