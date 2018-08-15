@@ -1,0 +1,40 @@
+.asteroids {
+  &.left {
+    background-color: $col_grass;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 25vw;
+    height: 100vh;
+
+    &:hover {
+      background-color: $col_medium;
+    }
+  }
+
+  &.right {
+    background-color: $col_marin;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 25vw;
+    height: 100vh;
+
+    &:hover {
+      background-color: $col_medium;
+    }
+  }
+
+  &.thrust {
+    background-color: $col_blood;
+    position: absolute;
+    left: 25%;
+    top: 0;
+    width: 50vw;
+    height: 50vh;
+
+    &:hover {
+      background-color: $col_medium;
+    }
+  }
+}

@@ -6,10 +6,12 @@ const MessageType = {
   ROOMKEYINPUT : 'room-key-input',
   GAMETYPE     : 'game-type',
 
+  CONTROL : 'control',
+
   INIT   :'initialise-game',
   UPDATE :'update-game',
-  PAUSE      :'pause-game',
-  EJECT      :'eject-game',
+  PAUSE  :'pause-game',
+  EJECT  :'eject-game',
   CLICK  :'click-canvas'
 }
 

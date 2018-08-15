@@ -1,0 +1,27 @@
+.pong {
+  &.up {
+    background-color: $col_sky;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 50vh;
+
+    &:hover {
+      background-color: $col_medium;
+    }
+  }
+
+  &.down {
+    background-color: $col_blood;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100vw;
+    height: 50vh;
+
+    &:hover {
+      background-color: $col_medium;
+    }
+  }
+}
