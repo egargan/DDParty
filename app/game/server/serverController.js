@@ -30,7 +30,7 @@ var serverController = ( function() {
 
   methods.init = (fps = 0,sps = 0) => {
 
-    // setting run callback
+    // setting run callback for node module
     loop = gameloop.setGameLoop(methods.run,params.fpsi);
   }
 
@@ -44,6 +44,7 @@ var serverController = ( function() {
 
   methods.run = (delta) => {
 
+    // incrementing server tick
     params.framecount++
 
     // updating lobby object
@@ -52,7 +53,7 @@ var serverController = ( function() {
     // when frame count hits fps
     if(params.framecount % Math.ceil(params.fps) === 0){
       // `delta` is the delta time from the last frame
-      // console.log('[ Main Loop ] (frame=%s, delta=%s)', frameCount, delta);
+      console.logDD('LOOP',`Frame : ${params.framecount}, Delta : ${delta}`);
     }
 
   }

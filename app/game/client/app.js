@@ -38,7 +38,7 @@ socket.on('connect',(data) => {
 
   // update for client bundle
   socket.on(MessageType.UPDATE,(bundle) => {
-    console.log("Client Recieved Update Bundle",bundle);
+    // console.log("Client Recieved Update Bundle",bundle);
   })
 
   // undefined behaviour, used to catch game destruction

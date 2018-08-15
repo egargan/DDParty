@@ -2,6 +2,8 @@
 // tictactoe server class
 // const TicTacToe = require('./TicTacToe')
 
+const Game = require('./Game');
+
 // importing module enum for message types
 const MessageType = require('../shared/message');
 
@@ -25,11 +27,13 @@ class gameController {
     this.pollLastCheck = Date.now()
 
     // setting up game
-    this.game = new TicTacToe(3)
+    this.game = new Game()
 
   }
 
   setup(){
+
+    this.game.setup();
 
     // this method when called will initialise all the players of a game
     this.game.initialisePlayers(this.clients)
@@ -68,7 +72,7 @@ class gameController {
         // checking if client has disconnected
         if(!this.clients[ci].isConnected()){
 
-          console.log(`Client ${this.clients[ci].id} has left the game!`)
+          console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
 
           // this.clients[ci].socket = null;
           // this.clients[ci] = null;
@@ -93,7 +97,11 @@ class gameController {
   }
 
   destroy(){
-    console.log(`[ GAME ] : ${this.id} has Shutdown, migrating clients!`);
+    // console.log(`[ GAME ] : ${this.id} has Shutdown, migrating clients!`);
+
+    console.logDD('GAME CONT',`${this.id} has Shutdown, migrating clients!`)
+
+
     this.dead = true;
     this.deconstruction(this,this.clients);
   }
