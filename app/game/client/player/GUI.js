@@ -28,12 +28,29 @@ module.exports = (function(){
     // storing reference to text input button for room key
     roomKeyTextInput   = document.getElementsByClassName('key-text')[0];
 
+    roomKeyTextInput.onkeyup = Methods.liveValidateText;
+
     // setting key down event to fire on submit method
     roomKeySubmitInput.onclick = Methods.onRoomKeySubmit;
+    roomKeyTextInput.onsubmit  = Methods.onRoomKeySubmit;
+
+  }
+
+  Methods.liveValidateText = (e) => {
+    let value = roomKeyTextInput.value || '';
+    let input = "";
+
+    if (value.length > 5) {
+      input = value.slice(0, 5);
+    } else {
+      input = value.toUpperCase();
+    }
 
     // storing reference to warning text banner
     bannerText = document.getElementsByClassName('warning-banner-text')[0];
 
+    roomKeyTextInput.value = input;
+    
   }
 
   Methods.onRoomKeySubmit = (e) => {
@@ -56,6 +73,7 @@ module.exports = (function(){
 
   // method that will verify input is logical
   Methods.roomKeyValidation = (text) => {
+    text = text.toUpperCase();
     if(text.length === 0) return false;
     if(text.length > 10) return false;
     if(text === '' || text === null) return false;
@@ -84,6 +102,51 @@ module.exports = (function(){
     bannerText.style.display = 'none';
   }
 
+  Methods.buildGui = (game) => {
+    let container = document.createElement('div');
+    container.setAttribute('class', 'container');
+    container.setAttribute('id', 'btn-container');
+    document.body.appendChild(container);
+
+    if (game === 'asteroids') {
+      Methods.buildAstroidsGui();
+    } else if (game === 'pong') {
+      Methods.buildPongGui();
+    } else {
+      console.log(`game \'${game}\' does not exist`)
+    }
+  }
+
+  Methods.createButton = (project, name) => {
+    let a = document.createElement('a');
+    a.text = name;
+    a.setAttribute('class', 'button ' + project + ' ' + name);
+    a.setAttribute('href', '#');
+    a.onclick = () => {
+      socket.emit(MessageType.CONTROL, name);
+      console.log(name);
+    }
+    document.getElementById('btn-container').appendChild(a);
+
+    return a;
+  }
+
+  Methods.buildAstroidsGui = () => {
+    // document.body.style.backgroundColor = 'red';
+
+    const left = Methods.createButton('asteroids', 'left');
+
+    const right = Methods.createButton('asteroids', 'right');
+
+    const thrust = Methods.createButton('asteroids', 'thrust');
+
+    const fire = Methods.createButton('asteroids', 'fire');
+  }
+
+  Methods.buildPongGui = () => {
+    const up = Methods.createButton('pong', 'up');
+    const down = Methods.createButton('pong', 'down');
+  }
 
   // when page load is complete
   window.onload = () => {
@@ -97,8 +160,9 @@ module.exports = (function(){
       console.log("GUI - Socket Connected!");
 
       socket.on(MessageType.GAMETYPE,(type) => {
-        console.log('Game Type Received!',type);
+        console.log('Game Type Received!', type);
         Methods.hideOverlay();
+        Methods.buildGui('pong');
       })
 
       // call to join lobby on server side

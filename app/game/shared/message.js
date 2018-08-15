@@ -6,12 +6,12 @@ const MessageType = {
   ROOMKEYINPUT : 'room-key-input',
   GAMETYPE     : 'game-type',
   CLIENTSTART  : 'game-type',
+  CONTROL : 'control',
   INIT   :'initialise-game',
   UPDATE :'update-game',
-  PAUSE      :'pause-game',
-  EJECT      :'eject-game',
-  CLICK  :'click-canvas',
-  WARNING : 'warning'
+  PAUSE  :'pause-game',
+  EJECT  :'eject-game',
+  CLICK  :'click-canvas'
 }
 
 module.exports = MessageType;

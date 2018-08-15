@@ -39,6 +39,10 @@ class Client {
       this.disconnectClient();
     })
 
+    this.socket.on('control', (payload) => {
+      console.logDD("CLIENT", `Client pressed ${payload}`);
+    });
+
   }
 
   disconnectClient(){
