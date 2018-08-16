@@ -12,6 +12,8 @@ module.exports = (function(){
 
   var bannerText = null
 
+  var playerControllerContainer = null;
+
   var socket = null;
 
   // object of functions ( if we want to export them )
@@ -28,11 +30,14 @@ module.exports = (function(){
     // storing reference to text input button for room key
     roomKeyTextInput   = document.getElementsByClassName('key-text')[0];
 
+    //
     roomKeyTextInput.onkeyup = Methods.liveValidateText;
 
     // setting key down event to fire on submit method
     roomKeySubmitInput.onclick = Methods.onRoomKeySubmit;
     roomKeyTextInput.onsubmit  = Methods.onRoomKeySubmit;
+
+
 
   }
 
@@ -84,6 +89,11 @@ module.exports = (function(){
     roomKeyOverlay.style.display = 'none';
   }
 
+  Methods.resetOverlay = () => {
+    roomKeyOverlay.style.display = 'block';
+    playerControllerContainer.remove();
+  }
+
   Methods.displayWarning = (warning) => {
 
     // setting banner text
@@ -103,10 +113,11 @@ module.exports = (function(){
   }
 
   Methods.buildGui = (game) => {
-    let container = document.createElement('div');
-    container.setAttribute('class', 'container');
-    container.setAttribute('id', 'btn-container');
-    document.body.appendChild(container);
+
+    playerControllerContainer = document.createElement('div');
+    playerControllerContainer.setAttribute('class', 'player-controls-container');
+    playerControllerContainer.setAttribute('id', 'btn-container');
+    document.body.appendChild(playerControllerContainer);
 
     if (game === 'asteroids') {
       Methods.buildAstroidsGui();
@@ -163,6 +174,10 @@ module.exports = (function(){
         console.log('Game Type Received!', type);
         Methods.buildGui(type);
         Methods.hideOverlay();
+      })
+
+      socket.on(MessageType.KICKPLAYER,() => {
+        Methods.resetOverlay();
       })
 
       // call to join lobby on server side

@@ -12,7 +12,7 @@ class Game {
 
     this.playerCount = 0;
 
-    this.type = 'asteroids'
+    this.type = 'pong'
 
     this.controllers = [];
 

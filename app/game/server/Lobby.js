@@ -133,14 +133,58 @@ class Lobby {
     return false;
   }
 
+  // Checks through all currently created rooms and checks if
+  // the key already exists
+  // Returns false if no room with the key was found, else the room with the
+  // same key is returned
+  checkIsExistingKey(key) {
+
+    // Loops through all active rooms
+    for(let room of this.rooms) {
+
+      // Checks their key against the new key
+      if (room.screen.getRoomKey() === key) {
+
+        // The keys match meaning it already exists
+        return room;
+      }
+
+    }
+
+    // No room is currently using the same key
+    return false;
+
+  }
+
+  // this room will attempt to find the room a client belongs to
+  checkExistingClientRoom(client){
+
+    // Loops through all active rooms
+    for(let room of this.rooms) {
+      // loops through all the clients of this room
+      for(let c of room.clients){
+        if(c.compare(client.socket)) return room;
+      }
+    }
+
+    return false;
+  }
+
   // this method is ran when a new screen object joins the server
   addScreen(socket){
 
     // incrementing room index;
     this.roomIndex++;
 
+
     // create new game Object
     let game = new gameController(this.roomIndex);
+
+    // generating random room key
+    let key = this.generateRoomKey();
+
+    // adding room key to room object
+    game.addScreen(socket,key);
 
     // if game destroys itself run this callback
     game.setDeconstruction( (game,clients) => {
@@ -149,18 +193,16 @@ class Lobby {
       for(let client of clients){
         // checking client is worth migrating
         if(client.isConnected()){
+
+          // resetting client side UI
+          client.transmit(MessageType.KICKPLAYER,1);
+
           // pushing client back into pool
           this.clients.push(client);
         }
       }
 
     });
-
-    let key = this.generateRoomKey();
-    // console.log("Key: " + key);
-
-    // adding main screen connection to client
-    game.addScreen(socket,key);
 
     console.logDD('LOBBY',`Creating Room - ${key}!`)
 
@@ -215,27 +257,7 @@ class Lobby {
     return false;
   }
 
-  // Checks through all currently created rooms and checks if
-  // the key already exists
-  // Returns false if no room with the key was found, else the room with the
-  // same key is returned
-  checkIsExistingKey(key) {
 
-    // Loops through all active rooms
-    for(let room of this.rooms) {
-
-      // Checks their key against the new key
-      if (room.screen.getRoomKey() === key) {
-
-        // The keys match meaning it already exists
-        return room;
-      }
-
-    }
-
-    // No room is currently using the same key
-    return false;
-  }
 
 
   addClient(socket){
@@ -244,37 +266,26 @@ class Lobby {
 
     if(client){
 
-      console.logDD('LOBBY','Existing Client Added to Lobby!');
+      // room the key potentially belongs to
+      let room = this.checkExistingClientRoom(client)
 
-      client.refreshSocket(socket);
+      if(room) {
 
-      // attempt sending of roomkey
-      client.setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
+        console.logDD('LOBBY',`Existing Client Rejoined Room ${room.roomKey}!`);
+        client.refreshSocket(socket);
+        room.rejoinRoom(client);
+        return
 
-        // room the key potentially belongs to
-        let room = this.checkIsExistingKey(key)
+      } else {
+        // console.logDD("LOBBY",'Client Entered Wrong Room');
+        // client.transmit(MessageType.WARNING,'Room Does Not Exist!')
+        // allow new client to be established
+        client = false;
+      }
 
-        // adding client to room
-        if(room) {
+    }
 
-          console.logDD('LOBBY',`Client ${client.getIdString()} Rejoined Room ${key}`);
-
-          // splicing client out of lobby pool and adding to room pool
-          room.rejoinRoom(client);
-
-        } else {
-
-          console.logDD("LOBBY",'Client Entered Wrong Room');
-          client.transmit(MessageType.WARNING,'Room Does Not Exist!')
-
-        }
-
-      })
-
-
-      return
-
-    } else {
+    if(!client){
 
       console.logDD('LOBBY','New Client Added to Lobby!');
 
@@ -319,62 +330,12 @@ class Lobby {
 
       })
 
-
     }
-
-  }
-
-  clientRoomKeyHook(client){
-
-
 
   }
 
   canBuildRoom(){
     return this.clients.length >= this.roomSize;
-  }
-
-  buildRoom(){
-
-    // checking number of active clients are enough to make game
-    if(this.canBuildRoom()){
-
-      // console.log("[ LOBBY ] : Creating New Game!");
-
-      console.logDD('LOBBY','Creating New Game!')
-
-
-      this.roomIndex++;
-
-      // create new game Object
-      let game = new gameController(this.roomIndex);
-
-      // if game destroys itself run this callback
-      game.setDeconstruction( (game,clients) => {
-
-        // migrating remaining clients back to lobby
-        for(let client of clients){
-          if(client.isConnected()){
-            this.clients.push(client);
-          }
-        }
-
-      });
-
-      // append clients to game object
-      for(let spaces = 0 ; spaces < this.roomSize ; spaces++){
-        game.addClient(this.clients.inward(spaces))
-      }
-
-      game.setup();
-
-      this.rooms.push(game);
-
-      // remove clients from lobby
-      this.trimLobby();
-
-    }
-    return false;
   }
 
   // defunct at the momment
@@ -395,3 +356,47 @@ class Lobby {
 }
 
 module.exports = Lobby;
+
+
+// buildRoom(){
+//
+//   // checking number of active clients are enough to make game
+//   if(this.canBuildRoom()){
+//
+//     // console.log("[ LOBBY ] : Creating New Game!");
+//
+//     console.logDD('LOBBY','Creating New Game!')
+//
+//
+//     this.roomIndex++;
+//
+//     // create new game Object
+//     let game = new gameController(this.roomIndex);
+//
+//     // if game destroys itself run this callback
+//     game.setDeconstruction( (game,clients) => {
+//
+//       // migrating remaining clients back to lobby
+//       for(let client of clients){
+//         if(client.isConnected()){
+//           this.clients.push(client);
+//         }
+//       }
+//
+//     });
+//
+//     // append clients to game object
+//     for(let spaces = 0 ; spaces < this.roomSize ; spaces++){
+//       game.addClient(this.clients.inward(spaces))
+//     }
+//
+//     game.setup();
+//
+//     this.rooms.push(game);
+//
+//     // remove clients from lobby
+//     this.trimLobby();
+//
+//   }
+//   return false;
+// }

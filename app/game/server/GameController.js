@@ -15,6 +15,8 @@ class gameController {
     //
     this.id = id;
 
+    this.roomKey = '';
+
     // socket connection for screen
     this.screen = null;
 
@@ -40,8 +42,7 @@ class gameController {
 
   setup(){
 
-    // this method when called will initialise all the players of a game
-    this.game.initialisePlayers(this.clients)
+
 
   }
 
@@ -96,13 +97,22 @@ class gameController {
 
   }
 
+  // set room destruction callback
   setDeconstruction(callback){
     this.deconstruction = callback
   }
 
   addScreen(socket,key){
+
     this.screen = new Screen(0,socket,key);
+
     this.screen.setup();
+
+    // when the screen leaves destroy game
+    this.screen.setEmitHook('disconnect',() => {
+      this.destroy()
+    });
+
   }
 
   joinRoom(client){
@@ -137,11 +147,7 @@ class gameController {
   }
 
   destroy(){
-    // console.log(`[ GAME ] : ${this.id} has Shutdown, migrating clients!`);
-
-    console.logDD('GAME CONT',`${this.roomKey} has Shutdown, migrating clients!`)
-
-
+    console.logDD('GAME CONT',`Room : ${this.roomKey}, has Shutdown, migrating clients!`)
     this.dead = true;
     this.deconstruction(this,this.clients);
   }
