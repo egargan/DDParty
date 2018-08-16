@@ -21,10 +21,10 @@ class BallContainer {
 
     this.balls = []
 
-    for(var b = 0 ; b < 4 ; b++){
-      this.balls.push(new Ball(Util.randomScreen(),Util.random(10,20)))
-    }
+  }
 
+  addBall(){
+    this.balls.push(new Ball(Util.randomScreen(),Util.random(30,70)))
   }
 
   update(delta){

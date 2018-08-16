@@ -50,7 +50,7 @@ module.exports = (function(){
     bannerText = document.getElementsByClassName('warning-banner-text')[0];
 
     roomKeyTextInput.value = input;
-    
+
   }
 
   Methods.onRoomKeySubmit = (e) => {
@@ -161,8 +161,8 @@ module.exports = (function(){
 
       socket.on(MessageType.GAMETYPE,(type) => {
         console.log('Game Type Received!', type);
+        Methods.buildGui(type);
         Methods.hideOverlay();
-        Methods.buildGui('pong');
       })
 
       // call to join lobby on server side

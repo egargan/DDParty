@@ -112,5 +112,23 @@ methods.onListen = () => {
 
 }
 
+// Generates a new key
+// Returns a key which is a string of length 5 consisting
+// of uppercase latin letters of length @length
+methods.generateKeyString = (length = 10) => {
+  // The possible symbols / character set the key can use
+  const symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  let key = '';
+
+  for(let char = 0; char < length; char++){
+    // Chooses a random symbol from the set and appends it to the
+    // key. This process is repeated until the desired length is reached
+    key += symbols.charAt(Math.floor(Math.random() * symbols.length));
+  }
+
+  // Returns the key
+  return key;
+}
 
 module.exports = methods

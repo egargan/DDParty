@@ -10,8 +10,14 @@ class Client {
     // this id
     this.id = id;
 
+    // a random key string for loose identifying clients
+    this.idString = Util.generateKeyString(10);
+
     // the ip of the socket connection
     this.ip = socket.handshake.address;
+
+    // flag to determine if client is in room
+    this.inRoom = false;
 
     // the sock of the client
     this.socket = socket;
@@ -32,6 +38,18 @@ class Client {
 
   }
 
+  getInRoom(){
+    return this.inRoom;
+  }
+
+  getIdString(){
+    return this.idString;
+  }
+
+  setInRoom(inRoom){
+    this.inRoom = inRoom;
+  }
+
   setup(){
 
     // saving emit hook for disconnect event
@@ -39,24 +57,20 @@ class Client {
       this.disconnectClient();
     })
 
-    this.socket.on('control', (payload) => {
-      console.logDD("CLIENT", `Client pressed ${payload}`);
-    });
-
   }
 
   disconnectClient(){
-    console.logDD('CLIENT',`Client ${this.ip} disconnected.`);
+    // console.logDD('CLIENT',`Client ${this.ip} disconnected.`);
   }
 
 
   // hook in for receiving various emissions from the client
   setEmitHook(hook,callback){
 
-    console.logDD('CLIENT',`Hook : ${hook}, Created for : ${this.ip}!`);
+    // console.logDD('CLIENT',`Hook : ${hook}, Created for : ${this.ip}!`);
 
     // checking hook or callback exist
-    if(hook && callback){
+    if(hook && callback !== null){
 
       // storing hook locally
       this.hooks[hook] = callback;
@@ -71,7 +85,7 @@ class Client {
   checkExistingHook(hook,callback){
     // deregistering hook incase its already in use
     if(this.socket.listeners(hook)){
-      this.socket.removeListener(hook,callback);
+      this.socket.removeAllListeners(hook);
 
     }
 
@@ -124,16 +138,22 @@ class Client {
   isConnected(){
 
     // incrementing dc attempts if not connected or resetting if connected
-    this.dcAttempts = !this.socket.connected ? this.dcAttempts+1 : 0;
+    if(!this.socket.connected){
+      this.dcAttempts=+1;
+    } else {
+      this.dcAttempts=0;
+    }
 
-    // this condition will allow client to remain disconnected until a reconnect
+    // this condition will allow a client to remain disconnected until a reconnect
     // max has been waited
     if(this.dcMax <= this.dcAttempts){
       this.disconnectClient();
       return this.socket.connected;
-    } else {
-      return true;
     }
+
+    // assume all is good
+    return true;
+
 
   }
 

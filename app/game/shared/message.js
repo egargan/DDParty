@@ -6,6 +6,7 @@ const MessageType = {
   ROOMKEYINPUT : 'room-key-input',
   GAMETYPE     : 'game-type',
   CLIENTSTART  : 'game-type',
+  PLAYERJOINEDLOBBY  : 'player-joined-lobby',
   CONTROL : 'control',
   INIT   :'initialise-game',
   UPDATE :'update-game',

@@ -42,6 +42,12 @@ socket.on('connect',(data) => {
     RoomKey = roomkey;
   })
 
+  // when player joins lobby append a player ball to lobby
+  socket.on(MessageType.PLAYERJOINEDLOBBY,() => {
+    console.log("PLAYER JOINED!");
+    bc.addBall();
+  })
+
   // initialising tictactoe
   socket.on(MessageType.INIT,(bundle) => {
     console.log("Client Recieved Initial Bundle",bundle);

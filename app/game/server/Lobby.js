@@ -5,6 +5,8 @@ var gameController = require('./GameController.js')
 
 var MessageType = require('../shared/message')
 
+var Util = require('../../utilities')
+
 class Lobby {
 
   constructor(roomSize) {
@@ -34,6 +36,17 @@ class Lobby {
     this.pollLastCheck = Date.now()
 
   }
+
+  // return room size ( defunct )
+  getRoomSize(){
+    return this.roomSize;
+  }
+
+  // set room size ( defunct )
+  setRoomSize(roomSize){
+    this.roomSize = roomSize;
+  }
+
 
   // UPDATING ALL GAME STATES
 
@@ -77,8 +90,11 @@ class Lobby {
       // iterating over clients
       for(let ci = this.clients.length-1 ; ci >= 0 ; ci--){
 
-        // checking if client has disconnected
-        if(!this.clients[ci].isConnected()){
+        let client = this.clients[ci];
+
+        // checking if client has disconnected and isnt in a lobby
+        // as the lobby is no longer administrating this object
+        if(!client.isConnected()){
 
           console.logDD('LOBBY',`Client ${this.clients[ci].id} has disconnected!`)
 
@@ -92,15 +108,6 @@ class Lobby {
 
   }
 
-  // return room size ( defunct )
-  getRoomSize(){
-    return this.roomSize;
-  }
-
-  // set room size ( defunct )
-  setRoomSize(roomSize){
-    this.roomSize = roomSize;
-  }
 
   // checking client already exists in the client pool ( for reconnecting clients )
   checkExists(socket){
@@ -111,6 +118,15 @@ class Lobby {
       // checking if client exists and returning true if so
       if(client.compare(socket)) return client;
 
+    }
+
+    // searching other rooms too
+    for(let room of this.rooms){
+      // searching each client of each subroom
+      for(let client of room.clients){
+        // checking if client exists and returning true if so
+        if(client.compare(socket)) return client;
+      }
     }
 
     // otherwise return false;
@@ -160,34 +176,12 @@ class Lobby {
 
     do {
       // Generate a new room code
-      key = this.generateKeyString();
+      key = Util.generateKeyString(5);
 
       // If the room code contains any banned words or is
       // already in use, regenerate a new code
     } while (this.checkIsInDictionary(key) || this.checkIsExistingKey(key));
 
-    return key;
-  }
-
-  // Generates a new key
-  // Returns a key which is a string of length 5 consisting
-  // of uppercase latin letters
-  generateKeyString() {
-    // The possible symbols / character set the key can use
-    const symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    // The length of the key
-    const keyLength = 5;
-
-    let key = '';
-
-    for(let char = 0; char < keyLength; char++){
-      // Chooses a random symbol from the set and appends it to the
-      // key. This process is repeated until the desired length is reached
-      key += symbols.charAt(Math.floor(Math.random() * symbols.length));
-    }
-
-    // Returns the key
     return key;
   }
 
@@ -254,7 +248,29 @@ class Lobby {
 
       client.refreshSocket(socket);
 
-      this.clientRoomKeyHook(client);
+      // attempt sending of roomkey
+      client.setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
+
+        // room the key potentially belongs to
+        let room = this.checkIsExistingKey(key)
+
+        // adding client to room
+        if(room) {
+
+          console.logDD('LOBBY',`Client ${client.getIdString()} Rejoined Room ${key}`);
+
+          // splicing client out of lobby pool and adding to room pool
+          room.rejoinRoom(client);
+
+        } else {
+
+          console.logDD("LOBBY",'Client Entered Wrong Room');
+          client.transmit(MessageType.WARNING,'Room Does Not Exist!')
+
+        }
+
+      })
+
 
       return
 
@@ -268,7 +284,41 @@ class Lobby {
 
       this.clientIndex++;
 
-      this.clientRoomKeyHook(client);
+      // attempt sending of roomkey
+      client.setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
+
+        // room the key potentially belongs to
+        let room = this.checkIsExistingKey(key)
+
+        // adding client to room
+        if(room) {
+
+          // iterating over all connected clients in lobby
+          for(var c = this.clients.length-1 ; c >= 0 ; c-- ){
+
+            // checking if current element is the client being added
+            if(this.clients[c] === client){
+
+              console.logDD('LOBBY',`Client ${client.getIdString()} Joined Room ${key}`);
+
+              // splicing client out of lobby pool and adding to room pool
+              room.joinRoom(this.clients[c]);
+
+              this.clients.splice(c,1);
+
+            }
+
+          }
+
+        } else {
+
+          console.logDD("LOBBY",'Client Entered Wrong Room');
+          client.transmit(MessageType.WARNING,'Room Does Not Exist!')
+
+        }
+
+      })
+
 
     }
 
@@ -276,40 +326,7 @@ class Lobby {
 
   clientRoomKeyHook(client){
 
-    // attempt sending of roomkey
-    client.setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
 
-      // room the key potentially belongs to
-      let room = this.checkIsExistingKey(key)
-
-      // adding client to room
-      if(room) {
-
-        // iterating over all connected clients in lobby
-        for(var c = this.clients.length-1 ; c >= 0 ; c-- ){
-
-          // checking if current element is the client being added
-          if(this.clients[c] === client){
-
-            console.logDD('LOBBY',`Client ${client.ip} Joined Room ${key}`);
-
-            // splicing client out of lobby pool and adding to room pool
-            room.addClient(this.clients[c]);
-
-            this.clients.splice(c,1);
-
-          }
-
-        }
-
-      } else {
-
-        console.logDD("LOBBY",'Client Entered Wrong Room');
-        client.transmit(MessageType.WARNING,'Room Does Not Exist!')
-
-      }
-
-    })
 
   }
 

@@ -31,26 +31,6 @@ class Screen extends Client {
     console.logDD('SCREEN',`Screen ${this.ip} - ${this.roomKey} disconnected.`);
   }
 
-  // hook in for receiving various emissions from the client
-  setEmitHook(hook,callback){
-
-    console.logDD('SCREEN',`Hook ${hook}, Created for ${this.ip}!`);
-
-    if(hook && callback){
-
-      // deregistering hook incase its already in use
-      if(this.socket.listeners(hook))
-        this.socket.removeListener(hook,callback);
-
-      // registering new hook
-      this.socket.on(hook,(payload) => {
-        callback(payload)
-      });
-
-    }
-
-  }
-
 }
 
 module.exports = Screen;

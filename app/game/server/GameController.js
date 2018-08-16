@@ -82,8 +82,12 @@ class gameController {
 
         // checking if client has disconnected
         if(!this.clients[ci].isConnected()){
-          console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
-          this.destroy();
+
+          // console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
+
+          // currently it does nothing as the server is not dependent on the
+          // clients existing
+
         }
 
       }
@@ -101,11 +105,34 @@ class gameController {
     this.screen.setup();
   }
 
-  addClient(client){
+  joinRoom(client){
 
+    //
     this.clients.push(client)
 
+    // informing client of game type
     client.transmit(MessageType.GAMETYPE,this.game.getType());
+
+    // inform screen a new player has joined
+    this.screen.transmit(MessageType.PLAYERJOINEDLOBBY,'newclient');
+
+    // linking control system to game object
+    this.game.initialisePlayer(client);
+
+  }
+
+  // this is ran when a client reconnects to the room
+  rejoinRoom(client){
+
+    // informing client of game type
+    client.transmit(MessageType.GAMETYPE,this.game.getType());
+
+    // linking control system to game object
+    // this.game.initialisePlayer(client);
+
+    // inform screen a new player has joined
+    // this.screen.transmit(MessageType.PLAYERJOINEDLOBBY,'newclient');
+
 
   }
 
