@@ -1,13 +1,16 @@
 
-
-var Vector = require('./vector');
-
-var CanvasLayer = require('./canvaslayer');
-
 var grageo = (function(){
 
-  // canvas parent node ( width default value )
-  var Container = null;
+  //
+  const Utility = require('./utility');
+
+  const Vector = require('./vector');
+
+  const Colour = require('./colour');
+
+  const Entity = require('./entity');
+
+  const CanvasLayer = require('./canvaslayer');
 
   // canvas layers
   var Layers = {
@@ -15,6 +18,9 @@ var grageo = (function(){
     Middle:new CanvasLayer('Grageo-Middle',1),
     Foreground:new CanvasLayer('Grageo-Foreground',2)
   }
+
+  // canvas parent node ( width default value )
+  var Container = null;
 
   // canvas DOM object
   var canvas = null;
@@ -360,64 +366,32 @@ var grageo = (function(){
   // draw method hook in
   Draw.draw = () => {
 
-    grageo.Layers.Background.clear();
-    grageo.Layers.Middle.clear();
-    grageo.Layers.Foreground.clear();
+    Layers.Background.clear();
+    Layers.Middle.clear();
+    Layers.Foreground.clear();
 
-    grageo.Layers.Middle.text(100,'Ariel','center',new Vector(width/2,height/2),'No Draw Hook In');
+    Layers.Middle.text(100,'Ariel','center',new Vector(width/2,height/2),'No Draw Hook In');
 
   }
 
-  // methods associated with performing utilites on shape objects
-  var Util = {}
+
+  // Augmenting the utility library with stateful methods
 
   // this method returns a vector of the width and height of the canvas
-  Util.size = () => {
+  Utility.size = () => {
     return new Vector(width,height);
   }
 
-  // this method returns a vector pointing to the center of the canvas
-  Util.middle = () => {
-    return Util.size().scale(0.5);
-  }
-
-  Util.mouse = () => {
+  Utility.mouse = () => {
     return mouse;
   }
 
-  Util.mouseOld = () => {
+  Utility.mouseOld = () => {
     return mouseOld;
   }
 
-  Util.random = (min = 0,max = 1) => {
-    return Math.random() * (max - min) + min;
-  }
-
-  Util.randomInt = (min = 0, max = 1) => {
-    return Math.round(Util.random(min,max))
-  }
-
-  Util.randomScreen = () => {
-    return new Vector(Util.random(0,Util.size().x),Util.random(0,Util.size().y))
-  }
-
-  Util.pyth = (v) => {
-    return Math.sqrt((v.x * v.x) + (v.y + v.y))
-  }
-
-  // converts @radian to degrees
-  Util.degrees = (radian) => {
-    return radian*(180.0/Math.PI);
-  }
-
-  // converts @degree to radians
-  Util.radians = (degree) => {
-    return degree*(Math.PI/180);
-  }
-
-  // pythagorean distance
-  Util.dist = (v1,v2) => {
-    return Math.sqrt(Math.pow(v2.x-v1.x,2)+Math.pow(v2.y-v1.y,2));
+  Utility.randomScreen = () => {
+    return new Vector(Utility.random(0,Utility.size().x),Utility.random(0,Utility.size().y))
   }
 
   // when page is ready
@@ -434,19 +408,26 @@ var grageo = (function(){
 
   return {
 
-    // canvas layer exposition
-    Layers,
-
     //update and utility method exposition
     Update:Update,
-    Util:Util,
 
     // library control methods
     Setup:Setup,
     Control:Control,
 
+    // exported classes
+    Utility:Utility,
+    Vector:Vector,
+    Colour:Colour,
+    Entity:Entity,
+    CanvasLayer:CanvasLayer,
+
+    // canvas layer exposition
+    Layers,
+
   }
 
 }());
+
 
 module.exports = grageo;

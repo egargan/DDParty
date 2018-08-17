@@ -84,7 +84,7 @@ class gameController {
         // checking if client has disconnected
         if(!this.clients[ci].isConnected()){
 
-          // console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
+          console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
 
           // currently it does nothing as the server is not dependent on the
           // clients existing

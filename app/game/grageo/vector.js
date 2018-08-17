@@ -1,8 +1,7 @@
 
-// importing Util
-var Util = require('./grageo').Util;
+var Util = require('./utility');
 
-class Vector {
+module.exports = class Vector {
 
   constructor(x=0,y=0,z=0) {
     this.x = x;
@@ -50,13 +49,11 @@ class Vector {
     return "[ " + (x?this.x+' ':'') + (y?this.y+' ':'') + (z?this.z+' ':'') + ']'
   }
 
-  // random(){
-  //   this.x = Util.random(-1,1);
-  //   this.y = Util.random(-1,1);
-  //   this.z = Util.random(-1,1);
-  //   return this;
-  // }
+  random(){
+    this.x = Util.random(-1,1);
+    this.y = Util.random(-1,1);
+    this.z = Util.random(-1,1);
+    return this;
+  }
 
 }
-
-module.exports = Vector;

@@ -13,7 +13,7 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 var path = require('path');
 
 module.exports = {
-	mode: 'production',
+	mode: 'development',
 	entry: {
 		home: './src/bundle.js',
 		screen:'./app/game/bundle_screen.js',

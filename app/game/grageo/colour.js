@@ -1,6 +1,6 @@
 
 // importing Util
-var Util = require('./grageo').Util;
+const Util = require('./utility');;
 
 class Colour {
 

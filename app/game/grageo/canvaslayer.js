@@ -1,5 +1,6 @@
 
-var Vector = require('./vector')
+// 
+const Vector = require('./vector');
 
 // canvas layer object that has all important draw methods within it.
 class CanvasLayer {

@@ -1,15 +1,12 @@
 
-// importing main grageo index
-const grageoLibrary = require('../../grageo');
+// importing main grageo library from the index
+const g = require('../../grageo');
 
 // message enum for consistency between server and client communications
 const MessageType = require('../../shared/message');
 
-// storing grageo main module
-const g = grageoLibrary.grageo;
-
-const Vector = grageoLibrary.vector;
-const Colour = grageoLibrary.colour;
+const Vector = g.Vector;
+const Colour = g.Colour;
 
 // storing reference to canvas layers
 var B = g.Layers.Background;
@@ -17,11 +14,10 @@ var M = g.Layers.Middle;
 var F = g.Layers.Foreground;
 
 // storing reference to Utility methods
-const Util = g.Util;
+const U = g.Utility;
 
 // importing ball container test
-const BallContainer = require('./Balls').BallContainer;
-
+var BallContainer = require('./Balls').BallContainer
 
 // socket initialisation
 const socket = io();
@@ -99,12 +95,12 @@ socket.on('connect',(data) => {
     bc.draw();
 
     M.fillCol(new Colour(255,255,255,0.5));
-    M.rect(new Vector(),Util.size());
+    M.rect(new Vector(),U.size());
 
     M.fillCol(new Colour(0,0,0,1));
     // drawing room key
-    M.text(100,'Raleway','center',new Vector(Util.size().x/2,Util.size().y/3),'Room Key:');
-    M.text(200,'Raleway','center',new Vector(Util.size().x/2,Util.size().y*1.5/2),RoomKey);
+    M.text(100,'Raleway','center',new Vector(U.size().x/2,U.size().y/3),'Room Key:');
+    M.text(200,'Raleway','center',new Vector(U.size().x/2,U.size().y*1.5/2),RoomKey);
 
   })
 

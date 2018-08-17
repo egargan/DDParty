@@ -1,19 +1,16 @@
 
-const glib = require('../../grageo');
-
-// grageo main module
-const grageo = glib.grageo;
+const g = require('../../grageo');
 
 // importing useful modules
-const Vector = glib.vector;
-const Colour = glib.colour;
-const Entity = glib.basic.Entity;
+const Vector = g.Vector;
+const Colour = g.Colour;
+const Entity = g.Entity.Entity;
 
 // storing access to middle canvas layer
-const M = grageo.Layers.Middle;
+const M = g.Layers.Middle;
 
 // storing access to utility methods
-const Util = grageo.Util;
+const U = g.Utility;
 
 class BallContainer {
 
@@ -21,10 +18,12 @@ class BallContainer {
 
     this.balls = []
 
+    this.addBall();
+
   }
 
   addBall(){
-    this.balls.push(new Ball(Util.randomScreen(),Util.random(30,70)))
+    this.balls.push(new Ball(U.randomScreen(),U.random(30,70)))
   }
 
   update(delta){
@@ -49,25 +48,28 @@ class Ball extends Entity {
     super(pos.x,pos.y,size,size);
 
     // setting colour randomly
-    this.setColour(new Colour().random())
+    this.setColour(new Colour());
+    this.getColour().random();
 
   }
 
   update(){
 
-    this.pos.add(new Vector(Util.random(-1,1),Util.random(-1,1)));
+    // this.pos.add(new Vector(U.random(-1,1),U.random(-1,1)));
+
+    this.pos.add(new Vector().random());
 
     if(this.pos.x - this.size.x < 0)
       this.pos.x = this.size.x;
 
-    else if(this.pos.x + this.size.x > Util.size().x)
-      this.pos.x = Util.size().x - this.size.x;
+    else if(this.pos.x + this.size.x > U.size().x)
+      this.pos.x = U.size().x - this.size.x;
 
     if(this.pos.y - this.size.x < 0)
       this.pos.y = this.size.y;
 
-    else if(this.pos.y + this.size.x > Util.size().y)
-      this.pos.y = Util.size().y - this.size.y;
+    else if(this.pos.y + this.size.x > U.size().y)
+      this.pos.y = U.size().y - this.size.y;
 
   }
 

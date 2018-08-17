@@ -323,8 +323,9 @@ class Lobby {
 
         } else {
 
-          console.logDD("LOBBY",'Client Entered Wrong Room');
-          client.transmit(MessageType.WARNING,'Room Does Not Exist!')
+          console.logDD('LOBBY',`Client Entered Wrong Room : ${key}`);
+
+          client.transmit(MessageType.WARNING,`Room '${key}' Does Not Exist!`);
 
         }
 
