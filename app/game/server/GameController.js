@@ -8,7 +8,10 @@ const Screen = require('./Screen');
 // importing module enum for message types
 const MessageType = require('../shared/message');
 
-class gameController {
+// client collection object
+const ClientCollection = require('./ClientCollection');
+
+class GameController {
 
   constructor(id) {
 
@@ -22,6 +25,8 @@ class gameController {
 
     //
     this.clients = [];
+
+    this._clients = new ClientCollection();
 
     //
     this.dead = false;
@@ -42,8 +47,6 @@ class gameController {
 
   setup(){
 
-
-
   }
 
   update(){
@@ -55,9 +58,9 @@ class gameController {
     let updateBundle = this.game.update();
 
     // updating clients with current game state
-    for(var client of this.clients){
+    this._clients.map((client) => {
       client.transmit(MessageType.UPDATE,updateBundle)
-    }
+    })
 
   }
 
@@ -78,20 +81,32 @@ class gameController {
         return;
       }
 
-      //
-      for(let ci = this.clients.length-1 ; ci > 0 ; ci--){
-
-        // checking if client has disconnected
-        if(!this.clients[ci].isConnected()){
-
-          console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
-
-          // currently it does nothing as the server is not dependent on the
-          // clients existing
-
+      // iterating checking connections status by mapping over client
+      // collection
+      this._clients.map((client) => {
+        // checking if client is connected
+        if(!client.isConnected()){
+          console.logDD('LOBBY',`Client ${client.id} has disconnected!`)
+          // if client disconnected currently it does nothing as the server
+          // is not dependent on the
+          // this._clients.remove(client.ip)
         }
+      })
 
-      }
+      // //
+      // for(let ci = this.clients.length-1 ; ci > 0 ; ci--){
+      //
+      //   // checking if client has disconnected
+      //   if(!this.clients[ci].isConnected()){
+      //
+      //     console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
+      //
+      //     // currently it does nothing as the server is not dependent on the
+      //     // clients existing
+      //
+      //   }
+      //
+      // }
 
     }
 
@@ -115,10 +130,12 @@ class gameController {
 
   }
 
+  // the lobby handles client migration, this method is now just to
+  // perform any further setup to the clients
   joinRoom(client){
 
-    //
-    this.clients.push(client)
+    // adding client to this room
+    this._clients.add(client.ip,client);
 
     // informing client of game type
     client.transmit(MessageType.GAMETYPE,this.game.getType());
@@ -149,7 +166,8 @@ class gameController {
   destroy(){
     console.logDD('GAME CONT',`Room : ${this.roomKey}, has Shutdown, migrating clients!`)
     this.dead = true;
-    this.deconstruction(this,this.clients);
+    // running desconstruction callback passing in room and room client collection
+    this.deconstruction(this,this._clients);
   }
 
 
@@ -159,4 +177,4 @@ class gameController {
 
 }
 
-module.exports = gameController;
+module.exports = GameController;

@@ -21,6 +21,22 @@ methods.init = (server) => {
     return this;
   }
 
+  // array remove element by its value
+  Array.prototype.removeByValue = (value) => {
+
+    // iterating over the array
+    for(let i = this.length-1 ; i >= 0 ; i--){
+
+      // if this element is equal to the given value,
+      // splice element out and return it
+      if(this[i] === value) return this.splice(i,1);
+
+    }
+
+    // if nothing found
+    return undefined;
+  }
+
   console.logDD = (owner,message,index) => {
 
     let pad = ' ';

@@ -1,4 +1,5 @@
 
+var Map = require("collections/map");
 
 // server controller module
 var serverController = ( function() {
@@ -94,9 +95,11 @@ var serverController = ( function() {
 
   })
 
+
   return {
     init:methods.init
   }
+
 
 }());
 

@@ -1,9 +1,12 @@
 
 var Client = require('./Client.js')
 
-var gameController = require('./GameController.js')
+var GameController = require('./GameController.js')
 
 var MessageType = require('../shared/message')
+
+// client collection object
+var ClientCollection = require('./ClientCollection');
 
 var Util = require('../../utilities')
 
@@ -16,6 +19,9 @@ class Lobby {
 
     // client pool
     this.clients = [];
+
+    // test object
+    this._clients = new ClientCollection();
 
     // game id counter
     this.roomIndex = 0;
@@ -58,16 +64,19 @@ class Lobby {
     // attempt to build room
     // this.buildRoom();
 
-    // updating all game loop methods
+    // iterating over rooms in collection
     for(let gi = 0 ; gi < this.rooms.length ; gi++){
 
+      // fetching room
       let room = this.rooms[gi];
 
+      // updating room
       room.update(delta);
 
+      // checking if room is dead
       if(room.dead){
         console.logDD('LOBBY','Room Dead!')
-
+        // splicing room out of circulation
         this.rooms.splice(gi,1);
       }
 
@@ -87,22 +96,31 @@ class Lobby {
       // updating last time since poll check
       this.pollLastCheck = Date.now();
 
-      // iterating over clients
-      for(let ci = this.clients.length-1 ; ci >= 0 ; ci--){
-
-        let client = this.clients[ci];
-
-        // checking if client has disconnected and isnt in a lobby
-        // as the lobby is no longer administrating this object
+      // iterating checking connections status by mapping over client
+      // collection
+      this._clients.map((client) => {
+        // checking if client is connected
         if(!client.isConnected()){
-
-          console.logDD('LOBBY',`Client ${this.clients[ci].id} has disconnected!`)
-
+          console.logDD('LOBBY',`Client ${client.id} has disconnected!`)
           // if disconnected splice out client from list of clients
-          this.clients.splice(ci,1);
+          this._clients.remove(client.ip)
         }
+      })
 
-      }
+      // // iterating over clients
+      // for(let ci = this.clients.length-1 ; ci >= 0 ; ci--){
+      //   let client = this.clients[ci];
+      //
+      //   // checking if client has disconnected and isnt in a lobby
+      //   // as the lobby is no longer administrating this object
+      //   if(!client.isConnected()){
+      //
+      //     console.logDD('LOBBY',`Client ${this.clients[ci].id} has disconnected!`)
+      //
+      //     // if disconnected splice out client from list of clients
+      //     this.clients.splice(ci,1);
+      //   }
+      // }
 
     }
 
@@ -112,25 +130,36 @@ class Lobby {
   // checking client already exists in the client pool ( for reconnecting clients )
   checkExists(socket){
 
-    // iterating over client collection
-    for(let client of this.clients){
+    let ip = this.getIp(socket);
 
-      // checking if client exists and returning true if so
-      if(client.compare(socket)) return client;
+    let existingClient = null;
 
-    }
+    // if client exists this will find it
+    existingClient = this._clients.get(ip)
 
-    // searching other rooms too
-    for(let room of this.rooms){
-      // searching each client of each subroom
-      for(let client of room.clients){
-        // checking if client exists and returning true if so
-        if(client.compare(socket)) return client;
+    // if superficial search found client
+    if(existingClient){
+      console.logDD('DEBUG',`Lobby Exists`);
+      // return client
+      return existingClient
+    } else {
+      // searching other rooms too
+      for(let room of this.rooms){
+        // searching rooms "client collection" object
+        existingClient = room._clients.get(ip)
+        // if found in this room return it
+        if(existingClient){
+          console.logDD('DEBUG',`Room Exists ${room.roomKey}`);
+          return existingClient;
+        }
       }
+
     }
 
-    // otherwise return false;
-    return false;
+    console.logDD('DEBUG',`Client New ${ip}`);
+
+    // otherwise return null;
+    return null;
   }
 
   // Checks through all currently created rooms and checks if
@@ -152,7 +181,7 @@ class Lobby {
     }
 
     // No room is currently using the same key
-    return false;
+    return null;
 
   }
 
@@ -161,13 +190,72 @@ class Lobby {
 
     // Loops through all active rooms
     for(let room of this.rooms) {
-      // loops through all the clients of this room
-      for(let c of room.clients){
-        if(c.compare(client.socket)) return room;
+
+      // if room contains this client
+      if(room._clients.get(client.ip)) return room;
+
+      // // loops through all the clients of this room
+      // for(let c of room.clients){
+      //   if(c.compare(client.socket)) return room;
+
       }
-    }
 
     return false;
+  }
+
+  addClient(socket){
+
+    // check client exists somewhere within the lobby structure
+    let client = this.checkExists(socket)
+
+    // if client does exist
+    if(client){
+
+      // room the key potentially belongs to
+      let room = this.checkExistingClientRoom(client)
+
+      if(room) {
+
+        console.logDD('LOBBY',`Existing Client Rejoined Room ${room.roomKey}!`);
+        // attempt to reconnect all socket methods / hooks
+        client.refreshSocket(socket);
+
+        // place client back to room
+        room.rejoinRoom(client);
+        return
+
+      } else {
+        // console.logDD("LOBBY",'Client Entered Wrong Room');
+        // client.transmit(MessageType.WARNING,'Room Does Not Exist!')
+
+        // reset client guard variable to allow new client to be established
+        client = false;
+      }
+
+    }
+
+    // if client not found or simply forced by above code
+    if(!client){
+
+      console.logDD('LOBBY','New Client Added to Lobby!');
+
+      // creating new client object
+      client = new Client(this.clientIndex,socket);
+
+      // adding new client to collection
+      this._clients.add(client.ip,client)
+
+      // this.clients.push(client)
+
+      this.clientIndex++;
+
+      // attempt sending of roomkey
+      client.setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
+        this.joinRoom(client,key)
+      })
+
+    }
+
   }
 
   // this method is ran when a new screen object joins the server
@@ -176,9 +264,8 @@ class Lobby {
     // incrementing room index;
     this.roomIndex++;
 
-
     // create new game Object
-    let game = new gameController(this.roomIndex);
+    let game = new GameController(this.roomIndex);
 
     // generating random room key
     let key = this.generateRoomKey();
@@ -187,20 +274,18 @@ class Lobby {
     game.addScreen(socket,key);
 
     // if game destroys itself run this callback
-    game.setDeconstruction( (game,clients) => {
+    game.setDeconstruction( (room,clients) => {
 
-      // migrating remaining clients back to lobby
-      for(let client of clients){
-        // checking client is worth migrating
-        if(client.isConnected()){
-
-          // resetting client side UI
-          client.transmit(MessageType.KICKPLAYER,1);
-
-          // pushing client back into pool
-          this.clients.push(client);
-        }
-      }
+      // migrating clients back to main collection assuming a condition
+      // condition - are they still connected
+      // then - if connected, transmit kick command to clients
+      this._clients.migrateAllIf(clients,(c) => {
+        return c.isConnected();
+      // and if connected then send transmission message
+      },(client) => {
+        // resetting client side UI if still connected
+        client.transmit(MessageType.KICKPLAYER,1);
+      })
 
     });
 
@@ -257,86 +342,43 @@ class Lobby {
     return false;
   }
 
+  // client entered room key, this method will determine if it was successful
+  // or not and then decide what to do
+  joinRoom(client,key){
+
+    // room the key potentially belongs to
+    let room = this.checkIsExistingKey(key)
 
 
+    // adding client to room
+    if(room) {
 
-  addClient(socket){
+      // fetch client in lobby collection for validation it exists
+      let joiningClient = this._clients. cut(client.ip)
 
-    let client = this.checkExists(socket)
+      // if client cut ( aka found and now copied into the joining client variable )
+      if(joiningClient){
 
-    if(client){
+        console.logDD('LOBBY',`Client ${client.getIdString()} Joined Room ${key}`);
 
-      // room the key potentially belongs to
-      let room = this.checkExistingClientRoom(client)
+        // migrating client from current lobby collection over to room
+        // client collection that the room key belongs to.
+        // room._clients.migrate(client.ip,this._clients);
 
-      if(room) {
+        // running client setup in room
+        room.joinRoom(joiningClient);
 
-        console.logDD('LOBBY',`Existing Client Rejoined Room ${room.roomKey}!`);
-        client.refreshSocket(socket);
-        room.rejoinRoom(client);
-        return
-
-      } else {
-        // console.logDD("LOBBY",'Client Entered Wrong Room');
-        // client.transmit(MessageType.WARNING,'Room Does Not Exist!')
-        // allow new client to be established
-        client = false;
       }
 
-    }
+    } else {
 
-    if(!client){
+      console.logDD('LOBBY',`Client Entered Wrong Room : ${key}`);
 
-      console.logDD('LOBBY','New Client Added to Lobby!');
-
-      client = new Client(this.clientIndex,socket);
-
-      this.clients.push(client)
-
-      this.clientIndex++;
-
-      // attempt sending of roomkey
-      client.setEmitHook(MessageType.ROOMKEYINPUT,(key) => {
-
-        // room the key potentially belongs to
-        let room = this.checkIsExistingKey(key)
-
-        // adding client to room
-        if(room) {
-
-          // iterating over all connected clients in lobby
-          for(var c = this.clients.length-1 ; c >= 0 ; c-- ){
-
-            // checking if current element is the client being added
-            if(this.clients[c] === client){
-
-              console.logDD('LOBBY',`Client ${client.getIdString()} Joined Room ${key}`);
-
-              // splicing client out of lobby pool and adding to room pool
-              room.joinRoom(this.clients[c]);
-
-              this.clients.splice(c,1);
-
-            }
-
-          }
-
-        } else {
-
-          console.logDD('LOBBY',`Client Entered Wrong Room : ${key}`);
-
-          client.transmit(MessageType.WARNING,`Room '${key}' Does Not Exist!`);
-
-        }
-
-      })
+      client.transmit(MessageType.WARNING,`Room '${key}' Does Not Exist!`);
 
     }
 
-  }
 
-  canBuildRoom(){
-    return this.clients.length >= this.roomSize;
   }
 
   // defunct at the momment
@@ -344,14 +386,17 @@ class Lobby {
 
   // return the number of current clients
   size(){
-    return this.clients.length;
+    return this._clients.size();
   }
 
   // print out lobby clients
   show(){
     console.logDD('LOBBY',`Lobby Size: ${this.size()}`)
-    for(let client of this.clients)
-      console.logDD('LOBBY',`Client - ${client.ip}`)
+    this._clients.showAll(ip);
+  }
+
+  getIp(socket){
+    return socket.handshake.address
   }
 
 }
