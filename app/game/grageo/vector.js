@@ -56,4 +56,14 @@ module.exports = class Vector {
     return this;
   }
 
+  // this method returns a new vector that sits within the dimensions
+  // the current vector ( used for random point within situations )
+  randomWithin(){
+    return new Vector(
+      Util.random(1,this.x-1),
+      Util.random(1,this.y-1),
+      Util.random(1,this.z-1)
+    )
+  }
+
 }

@@ -75,7 +75,8 @@ var grageo = (function(){
     Control.migrateCanvas(parent);
 
     // setting resize event to control method resonsible
-    window.onresize = Control.size;
+    // window.onresize = Control.size;
+    Control.setResizeEvent(Control.size)
 
     // forcing the function
     Control.size();
@@ -206,6 +207,9 @@ var grageo = (function(){
   // click event callback array
   var clickEvents = [];
 
+  // windows resize callback
+  var windowResizeEvents = [];
+
   function setUpEvents(){
 
     Container.onmousemove = (event) => {
@@ -234,6 +238,10 @@ var grageo = (function(){
       clickEvents.map((e,i,a) => e(event));
     }
 
+    Container.onresize = (event) => {
+      windowResizeEvents.map((e,i,a) => e(event));
+    }
+
   }
 
   Control.setMouseUpEvent = (callback) => {
@@ -252,6 +260,12 @@ var grageo = (function(){
   Control.setClickEvent = (callback) => {
     // push new callback to click events
     clickEvents.push(callback);
+  }
+
+  //
+  Control.setResizeEvent = (callback) => {
+    // push new callback to click events
+    windowResizeEvents.push(callback);
   }
 
   // desired loop fps

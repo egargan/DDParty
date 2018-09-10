@@ -7,6 +7,7 @@ const MessageType = {
   GAMETYPE     : 'game-type',
   CLIENTSTART  : 'game-type',
   PLAYERJOINEDLOBBY  : 'player-joined-lobby',
+  SCREENSIZE : 'screen-size',
   EXITROOM  : 'exit-room',
   KICKPLAYER  : 'kick-player',
   CONTROL : 'control',

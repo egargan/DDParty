@@ -57,11 +57,8 @@ class GameController {
     // updating game instance
     let updateBundle = this.game.update();
 
-    // updating clients with current game state
-    this._clients.map((client) => {
-      client.transmit(MessageType.UPDATE,updateBundle)
-    })
-
+    this.screen.transmit(MessageType.UPDATE,updateBundle)
+    
   }
 
   // GAME ADMINISTRATION
@@ -122,6 +119,23 @@ class GameController {
     this.screen = new Screen(0,socket,key);
 
     this.screen.setup();
+
+    // setting emit hook for when screen client sends initial bundle
+    this.screen.setEmitHook(MessageType.INIT,(bundle) => {
+
+      // setting game screen size based off init bundle
+      this.game.setScreenDimensions(bundle.screen)
+    })
+
+    // when screen changes, a message will be sent with the new coordinates
+    this.screen.setEmitHook(MessageType.SCREENSIZE,(size)=>{
+
+      console.logDD('GAME CONT',size);
+
+      // when screen size is updated
+      this.game.setScreenDimensions(size)
+
+    })
 
     // when the screen leaves destroy game
     this.screen.setEmitHook('disconnect',() => {

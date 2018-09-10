@@ -4,6 +4,10 @@
 
 const MessageType = require('../shared/message')
 
+const Vector = require('../grageo/vector');
+
+const Utility = require('../grageo/utility');
+
 class Game {
 
   constructor() {
@@ -12,9 +16,13 @@ class Game {
 
     this.playerCount = 0;
 
-    this.type = 'pong'
+    this.type = 'asteroids'
 
-    this.controllers = [];
+    // list of player controlled objects
+    this.players = [];
+
+    // size of screen client display surface
+    this.screenDimensions = new Vector(0,0)
 
   }
 
@@ -39,6 +47,10 @@ class Game {
     return this.bundle;
   }
 
+  getScreenDimensions(){
+    return this.screenDimensions;
+  }
+
   // setter for game bundle
   setBundle(bundle){
     this.bundle = bundle;
@@ -48,10 +60,32 @@ class Game {
     this.type = type;
   }
 
+  setScreenDimensions(screenDimensions){
+    this.screenDimensions = screenDimensions
+  }
+
   initialisePlayer(client){
-    let controller = new Controller(client);
-    controller.setup()
-    this.controllers.push(controller)
+
+    // creating new player orb
+    let player = new PlayerOrb(
+      // player socket
+      client,
+      // random size of orb
+      Utility.randomInt(30,60),
+      // new random position of orb
+      new Vector(
+        Utility.randomInt(0,this.screenDimensions.x),
+        Utility.randomInt(0,this.screenDimensions.y)
+      )
+    );
+
+    // seting up player object
+    player.setup()
+
+    // adding player object to collection
+    this.players.push(player)
+
+    // incremting bundle
     this.bundle.players += 1;
   }
 
@@ -61,8 +95,6 @@ class Game {
 
   // setup initial players involving anything game related
   initialisePlayers(clients){
-
-    console.logDD('GAME','Sending Client Setup Bundle!');
 
     // setting local games player count;
     this.playerCount = clients.length;
@@ -77,9 +109,31 @@ class Game {
 
   }
 
-  update(){
+  // this method updates all the players and subsequently rebundles them
+  updatePlayers(deltaTime){
+
+    this.bundle.players = {};
+
+    this.bundle.playerCount = this.players.length;
+
+    for(var player of this.players){
+
+      player.update(deltaTime);
+
+      this.bundle.players[player.getId()] = {
+        pos  : player.getPos(),
+        size : player.getSize()
+      }
+
+    }
+
+  }
+
+  update(deltaTime){
 
     this.bundle.tick++;
+
+    this.updatePlayers(deltaTime);
 
     return this.getBundle();
 
@@ -89,14 +143,61 @@ class Game {
 
 class Controller {
 
-  constructor(socket) {
-    this.client = socket;
+  constructor(client) {
+    this.client = client;
+  }
+
+  getId(){
+    return this.client.getIdString();
   }
 
   setup(){
+
     this.client.setEmitHook(MessageType.CONTROL,(bundle) => {
       console.logDD('CONTROLLER',`Client ${this.client.getIdString()} Pressed : ${bundle}`);
     })
+
+  }
+
+  update(){}
+
+}
+
+class PlayerOrb extends Controller {
+
+  constructor(client,size,pos){
+
+    super(client)
+
+    this.size = size;
+
+    this.pos = new Vector().set(pos)
+
+    this.speed = 10;
+
+  }
+
+  setup(){
+
+    this.client.setEmitHook(MessageType.CONTROL,(bundle) => {
+
+      switch (bundle) {
+        case 'left':   this.pos.x -= this.speed; break;
+        case 'right':  this.pos.x += this.speed; break;
+        case 'thrust': this.pos.y -= this.speed; break;
+        case 'fire':   this.pos.y += this.speed; break;
+        default:
+      }
+    })
+
+  }
+
+  getPos(){
+    return this.pos;
+  }
+
+  getSize(){
+    return this.size;
   }
 
   update(){}

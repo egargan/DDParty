@@ -16,20 +16,34 @@ class BallContainer {
 
   constructor() {
 
-    this.balls = []
+    this.balls = [];
 
-    this.addBall();
+    this.bundle = null;
 
   }
 
-  addBall(){
-    this.balls.push(new Ball(U.randomScreen(),U.random(30,70)))
+  setBundle(bundle){
+    this.bundle = bundle;
   }
 
   update(delta){
-    for(var ball of this.balls){
-      ball.update(delta);
+
+    this.balls = [];
+
+    if(this.bundle){
+
+      for(var p in this.bundle.players){
+
+        let player = this.bundle.players[p]
+
+        let ball = new Ball(player.pos,player.size)
+
+        this.balls.push(ball);
+
+      }
+
     }
+
   }
 
   draw(){
@@ -50,26 +64,6 @@ class Ball extends Entity {
     // setting colour randomly
     this.setColour(new Colour());
     this.getColour().random();
-
-  }
-
-  update(){
-
-    // this.pos.add(new Vector(U.random(-1,1),U.random(-1,1)));
-
-    this.pos.add(new Vector().random());
-
-    if(this.pos.x - this.size.x < 0)
-      this.pos.x = this.size.x;
-
-    else if(this.pos.x + this.size.x > U.size().x)
-      this.pos.x = U.size().x - this.size.x;
-
-    if(this.pos.y - this.size.x < 0)
-      this.pos.y = this.size.y;
-
-    else if(this.pos.y + this.size.x > U.size().y)
-      this.pos.y = U.size().y - this.size.y;
 
   }
 
