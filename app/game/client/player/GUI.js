@@ -2,6 +2,9 @@
 // message enum for consistency between server and client communications
 const MessageType = require('../../shared/message');
 
+//
+const Control = require('../../shared/Control');
+
 module.exports = (function(){
 
   var roomKeyOverlay = null;
@@ -128,15 +131,20 @@ module.exports = (function(){
     }
   }
 
-  Methods.createButton = (project, name) => {
+  Methods.createButton = (project, name, key) => {
+
     let a = document.createElement('a');
+
     a.text = name;
+
     a.setAttribute('class', 'button ' + project + ' ' + name);
     a.setAttribute('href', '#');
+
+    // on click firing
     a.onclick = () => {
-      socket.emit(MessageType.CONTROL, name);
-      console.log(name);
+      socket.emit(key);
     }
+
     document.getElementById('btn-container').appendChild(a);
 
     return a;
@@ -145,13 +153,14 @@ module.exports = (function(){
   Methods.buildAstroidsGui = () => {
     // document.body.style.backgroundColor = 'red';
 
-    const left = Methods.createButton('asteroids', 'left');
+    const thrust = Methods.createButton('asteroids', 'thrust', Control.THRUST);
 
-    const right = Methods.createButton('asteroids', 'right');
+    const fire = Methods.createButton('asteroids', 'fire', Control.FIRE);
 
-    const thrust = Methods.createButton('asteroids', 'thrust');
+    const left = Methods.createButton('asteroids', 'left', Control.LEFT);
 
-    const fire = Methods.createButton('asteroids', 'fire');
+    const right = Methods.createButton('asteroids', 'right', Control.RIGHT);
+
   }
 
   Methods.buildPongGui = () => {

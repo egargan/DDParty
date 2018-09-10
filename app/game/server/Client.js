@@ -1,7 +1,11 @@
 
-var MessageType = require('../shared/message')
+const MessageType = require('../shared/message')
 
-var Util = require('../../utilities.js');
+// enum of various controls
+const Control = require('../shared/Control');
+
+// link to server utilities module
+const ServerUtility = require('../../utilities')
 
 class Client {
 
@@ -11,7 +15,7 @@ class Client {
     this.id = id;
 
     // a random key string for loose identifying clients
-    this.idString = Util.generateKeyString(10);
+    this.idString = ServerUtility.generateKeyString(10);
 
     // the ip of the socket connection
     this.ip = socket.handshake.address;
@@ -42,6 +46,10 @@ class Client {
     return this.inRoom;
   }
 
+  getId(){
+    return this.getIdString();
+  }
+
   getIdString(){
     return this.idString;
   }
@@ -63,6 +71,23 @@ class Client {
     // console.logDD('CLIENT',`Client ${this.ip} disconnected.`);
   }
 
+  setControlHook(hook,callback){
+
+    // checking function is valid
+    if(!ServerUtility.isFunc(callback)) return false;
+
+    // checking control exists
+    if(!Control.hasOwnProperty(hook)) return false;
+
+    this.callbacks.key.push(callback);
+
+    // storing hook locally
+    this.hooks[hook] = callback;
+
+    // validating and saving hook to callback
+    this.saveEmitHook(hook,callback);
+
+  }
 
   // hook in for receiving various emissions from the client
   setEmitHook(hook,callback){
@@ -86,7 +111,6 @@ class Client {
     // deregistering hook incase its already in use
     if(this.socket.listeners(hook)){
       this.socket.removeAllListeners(hook);
-
     }
 
   }
@@ -130,7 +154,7 @@ class Client {
 
   // method to test communication has occured
   testCom(){
-    let h = Util.hashObj(this.socket)
+    let h = ServerUtility.hashObj(this.socket)
     // console.log(`Client ${this.id} : Test Com With ${h}`)
     this.socket.emit('test',h)
   }

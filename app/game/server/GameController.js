@@ -2,6 +2,8 @@
 // generic game class
 const Game = require('./Game');
 
+const Asteroids = require('../games/Asteroids');
+
 // class responsible for storing screen details
 const Screen = require('./Screen');
 
@@ -26,6 +28,7 @@ class GameController {
     //
     this.clients = [];
 
+    //
     this._clients = new ClientCollection();
 
     //
@@ -38,7 +41,7 @@ class GameController {
     this.pollLastCheck = Date.now()
 
     // setting up game
-    this.game = new Game()
+    this.game = new Asteroids()
 
     // setting up game object
     this.game.setup();
@@ -58,7 +61,7 @@ class GameController {
     let updateBundle = this.game.update();
 
     this.screen.transmit(MessageType.UPDATE,updateBundle)
-    
+
   }
 
   // GAME ADMINISTRATION
@@ -89,21 +92,6 @@ class GameController {
           // this._clients.remove(client.ip)
         }
       })
-
-      // //
-      // for(let ci = this.clients.length-1 ; ci > 0 ; ci--){
-      //
-      //   // checking if client has disconnected
-      //   if(!this.clients[ci].isConnected()){
-      //
-      //     console.logDD('GAME CONT',`Client ${this.clients[ci].id} has left the game!`)
-      //
-      //     // currently it does nothing as the server is not dependent on the
-      //     // clients existing
-      //
-      //   }
-      //
-      // }
 
     }
 

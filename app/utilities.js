@@ -55,6 +55,10 @@ methods.init = (server) => {
 
 }
 
+methods.isFunc = (func) => {
+  return func && {}.toString.call(func) === '[object Function]';
+}
+
 methods.storeServer = (server) => {
   methods.server = server;
 }

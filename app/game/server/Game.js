@@ -8,6 +8,8 @@ const Vector = require('../grageo/vector');
 
 const Utility = require('../grageo/utility');
 
+const Controller = require('./Controller');
+
 class Game {
 
   constructor() {
@@ -16,7 +18,9 @@ class Game {
 
     this.playerCount = 0;
 
-    this.type = 'asteroids'
+    // type of game, this is used for client side
+    // gui rendering
+    this.type = 'default'
 
     // list of player controlled objects
     this.players = [];
@@ -87,6 +91,7 @@ class Game {
 
     // incremting bundle
     this.bundle.players += 1;
+
   }
 
   reinitialisePlayer(client){
@@ -141,39 +146,17 @@ class Game {
 
 }
 
-class Controller {
-
-  constructor(client) {
-    this.client = client;
-  }
-
-  getId(){
-    return this.client.getIdString();
-  }
-
-  setup(){
-
-    this.client.setEmitHook(MessageType.CONTROL,(bundle) => {
-      console.logDD('CONTROLLER',`Client ${this.client.getIdString()} Pressed : ${bundle}`);
-    })
-
-  }
-
-  update(){}
-
-}
-
-class PlayerOrb extends Controller {
+class PlayerOrb {
 
   constructor(client,size,pos){
 
-    super(client)
+    this.client = client;
 
     this.size = size;
 
     this.pos = new Vector().set(pos)
 
-    this.speed = 10;
+    this.speed = 30;
 
   }
 
