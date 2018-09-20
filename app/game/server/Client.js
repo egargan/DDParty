@@ -74,12 +74,17 @@ class Client {
   setControlHook(hook,callback){
 
     // checking function is valid
-    if(!ServerUtility.isFunc(callback)) return false;
-
+    if(!ServerUtility.isFunc(callback)) {
+      console.logDD('CLIENT','Control Hook Missing Callback!');
+      return false;
+    }
     // checking control exists
-    if(!Control.hasOwnProperty(hook)) return false;
+    // if(!)) {
+    //   console.logDD('CLIENT',`Control Hook ${hook} Invalid!`);
+    //   return false;
+    // }
 
-    this.callbacks.key.push(callback);
+    // this.callbacks.hook.push(callback);
 
     // storing hook locally
     this.hooks[hook] = callback;

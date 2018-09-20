@@ -24,4 +24,8 @@ methods.radian = (degree) => {
   return degree*(Math.PI/180);
 }
 
+methods.roundTo = (val,places) => {
+  return parseFloat((val).toFixed(places));
+}
+
 module.exports = methods;

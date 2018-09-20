@@ -20,12 +20,12 @@ Utility.pyth = (v) => {
 }
 
 // converts @radian to degrees
-Utility.degrees = (radian) => {
+Utility.degree = (radian) => {
   return radian*(180.0/Math.PI);
 }
 
 // converts @degree to radians
-Utility.radians = (degree) => {
+Utility.radian = (degree) => {
   return degree*(Math.PI/180);
 }
 
@@ -33,5 +33,7 @@ Utility.radians = (degree) => {
 Utility.dist = (v1,v2) => {
   return Math.sqrt(Math.pow(v2.x-v1.x,2)+Math.pow(v2.y-v1.y,2));
 }
+
+
 
 module.exports = Utility;

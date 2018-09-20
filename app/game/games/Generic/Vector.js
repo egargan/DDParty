@@ -10,6 +10,7 @@ class Vector {
   }
 
   add(other){
+    // console.logDD('VECTOR',other);
     this.x+=other.x;
     this.y+=other.y;
     this.z+=other.z;
@@ -30,10 +31,31 @@ class Vector {
     return this;
   }
 
-  scale(scalar){
+  scale(scalar = null){
+
+    if(scalar === null) {
+      throw 'Scalar not defined'
+      return this;
+    }
+
+    if(scalar instanceof Vector){
+      return this.objectScale(scalar);
+    } else {
+      return this.singleScale(scalar);
+    }
+  }
+
+  singleScale(scalar){
     this.x*=scalar;
     this.y*=scalar;
     this.z*=scalar;
+    return this;
+  }
+
+  objectScale(scalar){
+    this.x*=scalar.x;
+    this.y*=scalar.y;
+    this.z*=scalar.z;
     return this;
   }
 
@@ -45,8 +67,8 @@ class Vector {
   }
 
   // by default vector prints out x and y ( z is rarely used )
-  toString(x = true,y = true,z = false){
-    return "[ " + (x?this.x+' ':'') + (y?this.y+' ':'') + (z?this.z+' ':'') + ']'
+  toString(x = true,y = true,z = true){
+    return "{ " + (x?this.x+' ':'') + (y?this.y+' ':'') + (z?this.z+' ':'') + '}'
   }
 
   random(){

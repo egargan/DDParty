@@ -1,5 +1,5 @@
 
-module.export = {
+const Control = {
 
   UP     : 'CONTROL_UP',
   DOWN   : 'CONTROL_DOWN',
@@ -9,3 +9,5 @@ module.export = {
   THRUST : 'CONTROL_THRUST'
 
 }
+
+module.exports = Control;

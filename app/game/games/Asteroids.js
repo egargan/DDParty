@@ -42,8 +42,9 @@ class Asteroids extends Game {
     // creating new player object
     let player = new Asteroid(
       client,
-      new Vector(0,0),
-      new Vector(100,100)
+      this.middleScreenPosition(),
+      // this.randomScreenPosition(),
+      new Vector(50,50)
     );
 
     // seting up player object
@@ -67,13 +68,23 @@ class Asteroids extends Game {
 
       player.update(deltaTime);
 
-      this.bundle.players[player.getId()
-      ] = {
-        pos  : player.getPos(),
-        size : player.getSize()
+      if(this.offScreen(player.getPos())){
+        player.setPos(this.middleScreenPosition())
       }
 
+      this.bundle.players[player.getId()] = player.getBundle();
+
     }
+
+  }
+
+  update(deltaTime){
+
+    this.bundle.tick++;
+
+    this.updatePlayers(deltaTime);
+
+    return this.getBundle();
 
   }
 

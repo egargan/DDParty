@@ -20,5 +20,18 @@ router.get('/screen',(req, res, next)=>{
   res.render('screen',{title:'Screen'})
 })
 
+// refactor for multi-game archtiecture
+
+// pong routing
+router.get('/pong',(req, res, next)=>{
+  res.render('pong',{title:'Pong'})
+})
+
+// asteroid routing
+router.get('/asteroids',(req, res, next)=>{
+  res.render('asteroids',{title:'Asteroids'})
+})
+
+
 // exporting module
 module.exports = router;

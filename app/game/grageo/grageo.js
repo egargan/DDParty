@@ -408,6 +408,17 @@ var grageo = (function(){
     return new Vector(Utility.random(0,Utility.size().x),Utility.random(0,Utility.size().y))
   }
 
+  Utility.polarLine = (start,angle,radius) => {
+    return new Vector(
+      start.x + Math.cos(Utility.radian(angle)) * radius,
+      start.y + Math.sin(Utility.radian(angle)) * radius
+    );
+  }
+
+  // this.planets[i].pos.x = this.planets[i].distance*2 * cos(this.planets[i].angle) + this.pos.x;
+  // this.planets[i].pos.y = this.planets[i].distance *   sin(this.planets[i].angle) + this.pos.y;
+
+
   // when page is ready
   window.onload = () => {
     // running initial setup

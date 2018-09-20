@@ -44,29 +44,55 @@ class Asteroid extends PhysEntity {
 
   setup(){
 
+    console.logDD('ASTEROID','Player Setup!');
+
     // player controller hook for up input
-    this.client.setControlHook(Control.UP,(event) => {
-      console.logDD('ASTEROID','Player Pressed UP ');
-    })
+    this.client.setControlHook(Control.THRUST,(event) => {
+
+      // console.logDD('ASTEROID','Player Pressed THRUST ');
+      // console.logDD('ASTEROID',this);
+
+      this.applyForwardImpulse();
+
+
+    });
 
     // player controller hook for down input
-    this.client.setControlHook(Control.DOWN,(event) => {
-      console.logDD('ASTEROID','Player Pressed DOWN ');
+    this.client.setControlHook(Control.FIRE,(event) => {
+      console.logDD('ASTEROID','Player Pressed FIRE ');
     })
 
     // player controller hook for down input
     this.client.setControlHook(Control.LEFT,(event) => {
+
+      this.direction+=15;
+
       console.logDD('ASTEROID','Player Pressed LEFT ');
     })
 
     // player controller hook for down input
     this.client.setControlHook(Control.RIGHT,(event) => {
+
+      this.direction-=15;
+
       console.logDD('ASTEROID','Player Pressed RIGHT ');
     })
 
   }
 
-  update(){
+  getBundle(){
+    return {
+      pos  : this.getPos(),
+      size : this.getSize(),
+      direction : this.getDirection()
+    }
+  }
+
+  update(delta){
+
+    super.update(delta);
+
+    // console.logDD('ASTEROID',`Asteroid Size : ${this.getSize()}`);
 
   }
 

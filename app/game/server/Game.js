@@ -68,6 +68,36 @@ class Game {
     this.screenDimensions = screenDimensions
   }
 
+  randomScreenPosition(){
+    return new Vector(
+      Utility.random(0,this.screenDimensions.x),
+      Utility.random(0,this.screenDimensions.y)
+    );
+  }
+
+  middleScreenPosition(){
+    return new Vector(
+      this.screenDimensions.x * 0.5,
+      this.screenDimensions.y * 0.5
+    )
+  }
+
+  resolveOffScreen(position){
+
+  }
+
+  offScreen(position){
+    
+    if( position.x < 0 ||
+        position.x > this.screenDimensions.x ||
+        position.y < 0 ||
+        position.y > this.screenDimensions.y ){
+          return true;
+    }
+
+    return false;
+  }
+
   initialisePlayer(client){
 
     // creating new player orb

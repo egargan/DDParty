@@ -18,6 +18,7 @@ module.exports = {
 		home: './src/bundle.js',
 		screen:'./app/game/bundle_screen.js',
 		player:'./app/game/bundle_player.js',
+		asteroids:'./app/game/client/asteroids/bundle_asteroids.js',
 	},
   output: {
     path: path.join(__dirname, '/public/js/'),

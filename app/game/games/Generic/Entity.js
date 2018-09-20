@@ -5,13 +5,13 @@ const Colour = require('./Colour');
 
 class Entity {
 
-  constructor(x,y,sx,sy){
+  constructor(pos,size){
 
     // setting entity position
-    this.pos = new Vector(x,y);
+    this.pos = new Vector(pos.x,pos.y);
 
     // setting entity size
-    this.size = new Vector(sx,sy);
+    this.size = new Vector(size.x,size.y);
 
     // entity default colour`
     this.colour = new Colour(255,0,255,1);
@@ -29,7 +29,7 @@ class Entity {
   getColour(){
     return this.colour;
   }
-  
+
   setPos(pos){
     this.pos.set(pos);
   }
