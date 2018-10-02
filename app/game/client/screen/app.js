@@ -129,7 +129,7 @@ socket.on('connect',(data) => {
     console.log("Clicked",e.x,e.y);
   })
 
-  g.Control.setScreen
+  // g.Control.setScreen
 
 
 })
